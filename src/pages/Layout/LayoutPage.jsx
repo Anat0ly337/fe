@@ -13,20 +13,43 @@ const LayoutPage = () => {
             key: 'users',
             label: 'Пользователи',
             icon: <UserOutlined />
-        }
+        },
+        {
+            key: 'advertisement',
+            label: 'Реклама',
+            icon: <UserOutlined />
+        },
+        {
+            key: 'songs',
+            label: 'Песни',
+            icon: <UserOutlined />
+        },
+        {
+            key: 'statistic',
+            label: 'Статистика',
+            icon: <UserOutlined />
+        },
+        {
+            key: 'promocode',
+            label: 'Промокоды',
+            icon: <UserOutlined />
+        },
     ]
+
+
 
     return (
         <>
-            <Layout>
+            <Layout style={{height: '100vh'}}>
                 <Sider>
                     <Menu
+                        style={{height: '100vh'}}
                         onClick={(i) => navigate(i.key)}
                         items={menuItems}
                     />
                 </Sider>
 
-                <Content>
+                <Content style={{margin: '25px'}}>
                     <Outlet />
                 </Content>
             </Layout>

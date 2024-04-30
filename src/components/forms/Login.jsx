@@ -1,20 +1,28 @@
-import {Button, Form, Input} from "antd";
+import {Button, Form, Input, message} from "antd";
 import {useForm} from "antd/es/form/Form";
 import Link from "antd/es/typography/Link";
 import {axiosInstance} from "../../shared/axiosInstance";
 import Cookies from 'js-cookie'
 import {useNavigate} from "react-router-dom";
+import {setAuth} from "../../store/main";
+import {useDispatch} from "react-redux";
 
 export const LoginForm = ({setReg}) => {
     const [form] = useForm()
     const navigate = useNavigate()
+    const dispatch = useDispatch()
     const handleSubmit = async (values) => {
+
         await axiosInstance.post('/v1/auth/authenticate', {
             ...values
         })
             .then((res) => {
                 Cookies.set('accessToken', res.data.access_token)
+                dispatch(setAuth(true))
                 navigate('/users')
+            })
+            .catch(() => {
+                message.error('Произошла ошибка')
             })
     }
 

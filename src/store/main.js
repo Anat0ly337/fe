@@ -3,7 +3,9 @@ import {createSlice} from "@reduxjs/toolkit";
 
 const initialState = {
     user: {},
-    isAuth: false,
+    albums: [],
+    authors: [],
+    isAuth: true,
 }
 
 const mainSlice = createSlice({
@@ -11,11 +13,17 @@ const mainSlice = createSlice({
     initialState,
     reducers: {
         setAuth (state, action) {
-            state.users = action.payload
+            state.isAuth = action.payload
+        },
+        setAlbums (state, action) {
+            state.albums = action.payload
+        },
+        setAuthors (state, action) {
+            state.authors = action.payload
         }
     }
 })
 
-export const {setAuth} = mainSlice.actions
+export const {setAuth, setAuthors, setAlbums} = mainSlice.actions
 
 export default mainSlice.reducer

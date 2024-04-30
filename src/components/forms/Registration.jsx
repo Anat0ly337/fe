@@ -1,4 +1,4 @@
-import {Button, Form, Input} from "antd";
+import {Button, Form, Input, message} from "antd";
 import {useForm} from "antd/es/form/Form";
 import Link from "antd/es/typography/Link";
 import {axiosInstance} from "../../shared/axiosInstance";
@@ -12,6 +12,9 @@ export const RegistrationForm = ({setReg}) => {
             ...values
         })
             .then((res) => setReg)
+            .catch(() => {
+                message.error('Произошла ошибка')
+            })
     }
 
     return (

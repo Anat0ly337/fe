@@ -6,17 +6,29 @@ import Cookies from "js-cookie";
 
 export const axiosInstance = axios.create({
     baseURL: `https://dligjs37pj7q2.cloudfront.net/api`,
-    headers: {
-        "Authorization": `Bearer ${Cookies.get('accessToken')}`,
-        "Content-Type": "application/json"
-    },
+});
+
+axiosInstance.interceptors.request.use(function (config) {
+    const token = Cookies.get('accessToken')
+
+    if (!token) {
+        store.dispatch(setAuth(false))
+    }
+
+    config.headers = {
+        Authorization: `Bearer ${token}`
+    }
+
+    return config
+}, function (error) {
+    return Promise.reject(error)
 });
 
 axiosInstance.interceptors.response.use(function (response) {
     return response;
 }, function (error) {
     if (error.response.status === 401) {
-        store.dispatch(setAuth(false))
+        return store.dispatch(setAuth(false))
     }
-    return Promise.reject(error);
+        return Promise.reject(error);
 })

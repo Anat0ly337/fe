@@ -15,9 +15,13 @@ export const LoginForm = ({setReg}) => {
 
         await axiosInstance.post('/v1/auth/authenticate', {
             ...values
+        }, {
+            headers: {
+                'Access-Control-Allow-Credentials': true
+            }
         })
             .then((res) => {
-                Cookies.set('accessToken', res.data.access_token)
+                // Cookies.set('accessToken', res.data.access_token)
                 dispatch(setAuth(true))
                 navigate('/users')
             })

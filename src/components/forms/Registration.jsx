@@ -11,7 +11,7 @@ export const RegistrationForm = ({setReg}) => {
         await axiosInstance.post('/v1/auth/register', {
             ...values
         })
-            .then((res) => setReg)
+            .then((res) => setReg())
             .catch(() => {
                 message.error('Произошла ошибка')
             })

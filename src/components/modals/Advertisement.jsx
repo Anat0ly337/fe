@@ -19,7 +19,7 @@ export const Advertisement = ({data}) => {
                 <Flex style={{marginTop: '20px'}} vertical gap={'10px'}>
                     {
                         data.advertisementData.map((i) => (
-                            <Image src={`https://dligjs37pj7q2.cloudfront.net/api/v1/media/${i.imageAwsUuid}`} />
+                            <Image src={`${process.env.REACT_APP_API_URL}/v1/media/${i.imageAwsUuid}`} />
                         ))
                     }
 

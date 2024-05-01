@@ -20,6 +20,11 @@ const selectOptions = [
     },
 ]
 
+const rule = {
+    required: true,
+    message: 'Обязательное поле'
+}
+
 export const CreateContract = () => {
     const [isActive, setActive] = useState(false)
     const [typeDuration, setTypeDuration] = useState(selectOptions[0])
@@ -42,7 +47,6 @@ export const CreateContract = () => {
             advertisementData: []
         }
         let count = 0;
-        console.log(val.pictures)
         for (let i = 0; i < val.pictures.fileList.length; i++) {
             await blobToBase64(val.pictures.fileList[i].originFileObj)
                 .then((res) => {
@@ -75,22 +79,22 @@ export const CreateContract = () => {
                 title={'Создание контракта'}
                 onClose={() => setActive(false)}
             >
-                <Form.Item name={'customerName'} label={'Имя заказчика'}>
+                <Form.Item rules={[rule]} name={'customerName'} label={'Имя заказчика'}>
                     <Input />
                 </Form.Item>
-                <Form.Item name={'description'} label={'Описание'}>
+                <Form.Item rules={[rule]} name={'description'} label={'Описание'}>
                     <TextArea />
                 </Form.Item>
-                <Form.Item initialValue={dayjs(new Date())} name={'dateStartCampaign'} label={'Дата начала действия'}>
+                <Form.Item rules={[rule]} initialValue={dayjs(new Date())} name={'dateStartCampaign'} label={'Дата начала действия'}>
                     <DatePicker />
                 </Form.Item>
-                <Form.Item name={'contract_duration'} label={'Срок контракта'}>
+                <Form.Item rules={[rule]} name={'contract_duration'} label={'Срок контракта'}>
                     <Space>
                         <InputNumber />
                         <Select defaultValue={typeDuration} onChange={(value, option) => setTypeDuration(option)} style={{width: '130px'}} options={selectOptions} />
                     </Space>
                 </Form.Item>
-                <Form.Item name={'pictures'} label={'Изображение'}>
+                <Form.Item rules={[rule]} name={'pictures'} label={'Изображение'}>
                     <Upload
                         listType={'picture'}
                         accept="image/*"

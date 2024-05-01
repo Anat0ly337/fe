@@ -3,21 +3,21 @@ import {store} from "../store/store";
 import {setAuth} from "../store/main";
 import Cookies from "js-cookie";
 
-
 export const axiosInstance = axios.create({
-    baseURL: `https://dligjs37pj7q2.cloudfront.net/api`,
+    baseURL: `${process.env.REACT_APP_API_URL}`,
+    withCredentials: true
 });
 
 axiosInstance.interceptors.request.use(function (config) {
-    const token = Cookies.get('accessToken')
-
-    if (!token) {
-        store.dispatch(setAuth(false))
-    }
-
-    config.headers = {
-        Authorization: `Bearer ${token}`
-    }
+    // const token = Cookies.get('accessToken')
+    //
+    // if (!token) {
+    //     store.dispatch(setAuth(false))
+    // }
+    //
+    // config.headers = {
+    //     Authorization: `Bearer ${token}`
+    // }
 
     return config
 }, function (error) {

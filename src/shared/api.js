@@ -25,8 +25,8 @@ export const apiRequests = {
         }
     },
     media: {
-        get: async () => {
-            return axiosInstance.get(`/admin/media`)
+        get: async (page, size) => {
+            return axiosInstance.get(`/admin/media?page=${page}&size=${size}`)
         },
         allAuthors: async () => {
             return axiosInstance.get(`/admin/media/authors`)
@@ -61,7 +61,7 @@ export const apiRequests = {
     },
     advertisement: {
         getAll: async () => {
-            return axiosInstance.get(`/admin/advertisement/contracts?size=100`)
+            return axiosInstance.get(`/admin/advertisement/contracts?size=10000`)
         },
         create: async (body) => {
             return axiosInstance.post(`/admin/advertisement/contract`, body)

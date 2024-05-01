@@ -34,6 +34,18 @@ const UsersPage = () => {
             key: 'registeredDate',
         },
         {
+            title: 'Статус аккаунта',
+            dataIndex: 'accountBlocked',
+            key: 'accountBlocked',
+            render: (_, {accountBlocked}) => (
+                <Tag
+                    color={!accountBlocked ? 'red' : 'green'}
+                >
+                    {!accountBlocked ? 'Заблокирован' : 'Разблокирован'}
+                </Tag>
+            )
+        },
+        {
             title: 'Роль',
             dataIndex: 'userRole',
             key: 'userRole',
@@ -44,6 +56,11 @@ const UsersPage = () => {
                     {userRole}
                 </Tag>
             )
+        },
+        {
+            title: 'ID устройства',
+            dataIndex: 'deviceId',
+            key: 'deviceId'
         },
         {
             title: 'Подписка',

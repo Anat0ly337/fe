@@ -1,6 +1,6 @@
 import {apiRequests} from "../../shared/api";
 import {useEffect, useState} from "react";
-import {message, Table} from "antd";
+import {message, Table, Tag} from "antd";
 import {CreatePromocode} from "../../components/modals/CreatePromocode";
 
 
@@ -18,7 +18,7 @@ const PromocodesPage = () => {
 
     const columns = [
         {
-            title: 'Номер',
+            title: 'Код',
             dataIndex: 'promocodeNumber',
             key: 'promocodeNumber',
         },
@@ -31,6 +31,9 @@ const PromocodesPage = () => {
             title: 'Статус',
             dataIndex: 'activated',
             key: 'activated',
+            render: (_, record) => (
+                <Tag color={!record.activated ? 'red' : 'geekblue'}>{!record.activated ? 'Не активен' : 'Активен'}</Tag>
+            )
         },
     ]
 

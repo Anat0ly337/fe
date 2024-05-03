@@ -18,7 +18,7 @@ const selectOptions = [
         key: 'MONTH'
     },
     {
-        value: 'Недели',
+        value: 'Год',
         key: 'YEAR'
     },
 ]

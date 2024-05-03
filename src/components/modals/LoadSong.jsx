@@ -25,6 +25,7 @@ const LoadSong = ({updateRow}) => {
         for (let key in val) {
             if (typeof val[key] === "object") {
                 formData.append(key, new Blob([val[key].file.originFileObj]))
+                formData.append(`${key}ContentType`, val[key].file.originFileObj.type)
             } else {
                 formData.append(key, val[key])
             }
@@ -76,7 +77,7 @@ const LoadSong = ({updateRow}) => {
                     <Input />
                 </Form.Item>
                 <Form.Item rules={[rule]} label={'Год'} name={'yearIssue'}>
-                    <Input />
+                    <InputNumber />
                 </Form.Item>
                 <Form.Item rules={[rule]} label={'Жанр'} name={'genre'}>
                     <Input />
@@ -89,16 +90,16 @@ const LoadSong = ({updateRow}) => {
                 </Form.Item>
                 <Form.Item rules={[rule]} label={'Трек'} name={'song'}>
                     <Upload
-                        accept=".mp3,audio/*, image/*"
+                        accept="audio/mpeg, .mp4, .m4a"
                         action='/'
                         onChange={onChange}
                     >
                         <Button>Загрузить</Button>
                     </Upload>
                 </Form.Item>
-                <Form.Item rules={[rule]} label={'Текст'} name={'textFile'}>
+                <Form.Item rules={[rule]} label={'Текст'} name={'txt'}>
                     <Upload
-                        accept=".mp3,audio/*, .txt"
+                        accept="text/plain"
                         action='/'
                         onChange={onChange}
                     >
@@ -107,7 +108,7 @@ const LoadSong = ({updateRow}) => {
                 </Form.Item>
                 <Form.Item rules={[rule]} label={'Изображение'} name={'img'}>
                     <Upload
-                        accept=".mp3,audio/*, image/*"
+                        accept=".jpg, image/jpeg, .jpeg, image/jpeg"
                         action='/'
                         onChange={onChange}
                     >
@@ -116,7 +117,7 @@ const LoadSong = ({updateRow}) => {
                 </Form.Item>
                 <Form.Item rules={[rule]} label={'Ноты'} name={'notes'}>
                     <Upload
-                        accept=".mp3,audio/*, image/*"
+                        accept="audio/midi"
                         action='/'
                         onChange={onChange}
                     >

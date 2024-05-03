@@ -1,12 +1,13 @@
-import {Layout, Menu, Spin} from "antd";
+import {Layout, Menu, message, Spin} from "antd";
 import Sider from "antd/es/layout/Sider";
 import {Content} from "antd/es/layout/layout";
 import {Navigate, Outlet, useNavigate} from "react-router-dom";
-import {UserOutlined} from "@ant-design/icons";
+import {LogoutOutlined, UserOutlined} from "@ant-design/icons";
 import {useDispatch, useSelector} from "react-redux";
 import {Suspense, useEffect} from "react";
 import Cookies from "js-cookie";
 import main, {setAuth} from "../../store/main";
+import {apiRequests} from "../../shared/api";
 
 
 const LayoutPage = () => {
@@ -14,7 +15,14 @@ const LayoutPage = () => {
     const {mainSlice} = useSelector(state => state)
     const dispatch = useDispatch()
 
+
     const menuItems = [
+        {
+            key: 'logout',
+            label: 'Выйти',
+            icon:  <LogoutOutlined />
+        },
+
         {
             key: 'users',
             label: 'Пользователи',
@@ -42,13 +50,26 @@ const LayoutPage = () => {
         },
     ]
 
-    useEffect(() => {
-        const token = Cookies.get('accessToken')
-        if (!token) {
-            dispatch(setAuth(false))
+    const handleLink = async (link) => {
+        if (link.key === 'logout') {
+            await apiRequests.logout()
+                .then((res) => {
+                    sessionStorage.removeItem('accessToken')
+                    dispatch(setAuth(false))
+                })
+                .catch(() => message.error('Произошла ошибка'))
+        } else {
+            navigate(link.key)
         }
-    }, [mainSlice.isAuth]);
+    }
 
+    // useEffect(() => {
+    //     const token = Cookies.get('jwtToken')
+    //     if (!token) {
+    //         dispatch(setAuth(false))
+    //     }
+    //     console.log(token)
+    // }, [mainSlice.isAuth]);
     if (!mainSlice.isAuth) return <Navigate to={'/auth'} />
 
     return (
@@ -57,7 +78,7 @@ const LayoutPage = () => {
                 <Sider>
                     <Menu
                         style={{height: '100vh'}}
-                        onClick={(i) => navigate(i.key)}
+                        onClick={handleLink}
                         items={menuItems}
                     />
                 </Sider>

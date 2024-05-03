@@ -28,6 +28,14 @@ const PromocodesPage = () => {
             key: 'period',
         },
         {
+            title: 'Дата активации',
+            dataIndex: 'activateDate',
+            key: 'activateDate',
+            render: (_, record) => (
+                <p>{!record.activateDate ? 'Не активирован' : record.activateDate}</p>
+            )
+        },
+        {
             title: 'Статус',
             dataIndex: 'activated',
             key: 'activated',

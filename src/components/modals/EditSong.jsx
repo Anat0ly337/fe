@@ -24,6 +24,7 @@ const EditSong = ({data, updateRow}) => {
             if (submitData[key]) {
                 if (typeof submitData[key] === "object") {
                     formData.append(key, new Blob([submitData[key].fileList[0].originFileObj]))
+                    formData.append(`${key}ContentType`, submitData[key].file.originFileObj.type)
                 }
                 formData.append(key, submitData[key])
             }
@@ -35,6 +36,8 @@ const EditSong = ({data, updateRow}) => {
                     ...data,
                     ...val
                 })
+                message.success('Аудио успешно изменено')
+                setActive(false)
             })
             .catch(() => {
                 message.error('Произошла ошибка')

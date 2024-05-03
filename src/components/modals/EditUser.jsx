@@ -10,8 +10,8 @@ export const EditUser = ({userData, updateRow}) => {
 
     const updateHandle = async (val) => {
         const uniq = findUniqueKeys(userData, val)
-
-        if (uniq.accountBlocked === (true || false)) {
+        console.log(uniq)
+        if (typeof uniq.accountBlocked === "boolean") {
             await apiRequests.user.updateStatus(userData.id, uniq.accountBlocked === true ? 'BLOCKED' : 'UNBLOCKED')
                 .then((res) => {
                     updateRow(res.data)
@@ -62,6 +62,9 @@ export const EditUser = ({userData, updateRow}) => {
                         <Input />
                     </Form.Item>
                     <Form.Item label={'Роль'} name={'userRole'}>
+                        <Input />
+                    </Form.Item>
+                    <Form.Item label={'ID устройства'} name={'deviceId'}>
                         <Input />
                     </Form.Item>
                     <Form.Item label={'Пароль'} name={'password'}>

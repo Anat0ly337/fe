@@ -7,7 +7,8 @@ import {EditUser} from "../../components/modals/EditUser";
 import UserActivities from "../../components/modals/UserActivities";
 import {SearchUsers} from "../../components/forms/SearchUsers";
 import {CreateUser} from "../../components/modals/CreateUser";
-
+import {axiosInstance} from "../../shared/axiosInstance";
+import Cookies from "js-cookie";
 
 const UsersPage = () => {
     const [users, setUsers] = useState([])
@@ -39,9 +40,9 @@ const UsersPage = () => {
             key: 'accountBlocked',
             render: (_, {accountBlocked}) => (
                 <Tag
-                    color={!accountBlocked ? 'red' : 'green'}
+                    color={!accountBlocked ? 'green' : 'red'}
                 >
-                    {!accountBlocked ? 'Заблокирован' : 'Разблокирован'}
+                    {!accountBlocked ? 'Разблокирован' : 'Заблокирован'}
                 </Tag>
             )
         },
@@ -99,7 +100,8 @@ const UsersPage = () => {
             .then((res) => {
                 setUsers(res.data)
             })
-
+        console.log(Cookies.get('jwtToken'))
+        console.log(Cookies.get('accessToken'))
     }, []);
 
 

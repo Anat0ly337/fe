@@ -5,19 +5,24 @@ import Cookies from "js-cookie";
 
 export const axiosInstance = axios.create({
     baseURL: `${process.env.REACT_APP_API_URL}`,
-    withCredentials: true
+    headers: {
+        'Access-Control-Allow-Credentials': true,
+    }
 });
 
+axios.defaults.withCredentials = true
+
 axiosInstance.interceptors.request.use(function (config) {
-    // const token = Cookies.get('accessToken')
-    //
-    // if (!token) {
-    //     store.dispatch(setAuth(false))
-    // }
-    //
-    // config.headers = {
-    //     Authorization: `Bearer ${token}`
-    // }
+    const token = sessionStorage.getItem('accessToken')
+
+    if (!token) {
+        store.dispatch(setAuth(false))
+    }
+
+    config.headers = {
+        'Authorization': `Bearer ${token}`
+
+    }
 
     return config
 }, function (error) {

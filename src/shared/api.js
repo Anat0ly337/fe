@@ -74,5 +74,8 @@ export const apiRequests = {
         create: async (body) => {
             return axiosInstance.post(`/admin/promocode/createCode`, body)
         }
+    },
+    logout: () => {
+        return axiosInstance.get('/v1/auth/logout')
     }
 }

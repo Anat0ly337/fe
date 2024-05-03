@@ -10,7 +10,7 @@ export const SearchUsers = ({updateData}) => {
             if (val.email) {
                 await apiRequests.users.getByEmail(val.email)
                     .then((res) => {
-                        updateData([res.data])
+                        updateData(res.data)
                     })
             } else if (val.id_device) {
                 await apiRequests.users.getByIdDevice(val.id_device)

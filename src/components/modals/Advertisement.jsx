@@ -11,7 +11,7 @@ export const Advertisement = ({data}) => {
     const [pictures, setPictures] = useState([])
     const showModal = () => {
         data.advertisementData.map(i => {
-            axiosInstance.get(`https://dligjs37pj7q2.cloudfront.net/api/v1/media/${i.imageAwsUuid}`, {
+            axiosInstance.get(`http://karaokeenv2.ap-south-1.elasticbeanstalk.com/${i.imageAwsUuid}`, {
                 responseType: 'blob'
             })
                 .then((res) => {

@@ -23,6 +23,7 @@ const EditSong = ({data, updateRow}) => {
         for (let key in submitData) {
             if (submitData[key]) {
                 if (typeof submitData[key] === "object") {
+                    formData.delete(key)
                     formData.append(key, new Blob([submitData[key].fileList[0].originFileObj]))
                     formData.append(`${key}ContentType`, submitData[key].file.originFileObj.type)
                 }

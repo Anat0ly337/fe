@@ -52,7 +52,7 @@ export const CreatePromocode = ({updateRow}) => {
                 <Form.Item rules={[rule]} label={'Номер промокода'} name={'promocodeNumber'}>
                     <Input />
                 </Form.Item>
-                <Form.Item rules={[rule]} label={'Срок действия'} name={'period'}>
+                <Form.Item required label={'Срок действия'} name={'period'}>
                     <Space>
                         <InputNumber />
                         <Select defaultValue={typeDuration} onChange={(value, option) => setTypeDuration(option)} style={{width: '130px'}} options={selectOptions} />

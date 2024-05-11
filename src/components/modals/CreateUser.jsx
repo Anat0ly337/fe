@@ -5,29 +5,16 @@ import {Button, DatePicker, Form, Input, message, Modal, Select, Switch} from "a
 import {EditOutlined} from "@ant-design/icons";
 import ModalFormLayout from "../../shared/ui/ModalFormLayout";
 import dayjs from "dayjs";
+import {SelectRole} from "../../shared/ui/SelectRole";
 
 
-const roles = [
-    {
-        value: 'USER',
-        key: 'USER'
-    },
-    {
-        value: 'MODERATOR',
-        key: 'MODERATOR'
-    },
-    {
-        value: 'ADMIN',
-        key: 'ADMIN'
-    }
-]
+
 
 export const CreateUser = ({updateRow}) => {
     const [isActive, setActive] = useState(false)
     const [isPremium, setPremium] = useState(false)
 
     const handleSubmit = async (val) => {
-
         const userData = {
             ...val,
             userSubscription: null
@@ -43,6 +30,7 @@ export const CreateUser = ({updateRow}) => {
         })
             .then((res) => {
                 updateRow(res.data)
+                message.success('Пользователь успешно создан')
             })
             .catch((e) => {
                 message.error('Произошла ошибка')
@@ -65,8 +53,8 @@ export const CreateUser = ({updateRow}) => {
                 <Form.Item label={'ID приставки'} name={'deviceId'}>
                     <Input />
                 </Form.Item>
-                <Form.Item label={'Роль'} initialValue={roles[0].value} name={'userRole'}>
-                    <Select options={roles} />
+                <Form.Item initialValue={'USER'} label={'Роль'} name={'userRole'}>
+                    <SelectRole />
                 </Form.Item>
                 <Form.Item label={'Пароль'} name={'password'}>
                     <Input />
@@ -76,7 +64,7 @@ export const CreateUser = ({updateRow}) => {
                 </Form.Item>
                 {
                     isPremium && (
-                        <Form.Item name={'expirationDate'} label={'Годен до'}>
+                        <Form.Item name={'expirationDate'} label={'Срок истечения'}>
                             <DatePicker  style={{width: '100%'}} />
                         </Form.Item>
                     )

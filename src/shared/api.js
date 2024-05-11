@@ -3,8 +3,8 @@ import {axiosInstance} from "./axiosInstance";
 
 export const apiRequests = {
     users: {
-        get: async () => {
-            return axiosInstance.get('/admin/users?size=100000')
+        get: async (size = 10, page = 0) => {
+            return axiosInstance.get(`/admin/users?size=${size}&page=${page}`)
         },
         getByIdDevice: async (id) => {
             return axiosInstance.get(`/admin/users/searchUserByDeviceId/${id}`)
@@ -47,6 +47,9 @@ export const apiRequests = {
                 }
             })
 
+        },
+        getText: async (id) => {
+            return axiosInstance.get(`/v1/media/${id}/text`)
         }
     },
     authors: {
@@ -60,11 +63,18 @@ export const apiRequests = {
         }
     },
     advertisement: {
-        getAll: async () => {
-            return axiosInstance.get(`/admin/advertisement/contracts?size=10000`)
+        getAll: async (size = 10, page = 0) => {
+            return axiosInstance.get(`/admin/advertisement/contracts`, {
+                params: {
+                    page, size
+                }
+            })
         },
         create: async (body) => {
             return axiosInstance.post(`/admin/advertisement/contract`, body)
+        },
+        delete: async (id) => {
+            return axiosInstance.delete(`/admin/advertisement/delete/${id}`)
         }
     },
     promocode: {
@@ -73,8 +83,74 @@ export const apiRequests = {
         },
         create: async (body) => {
             return axiosInstance.post(`/admin/promocode/createCode`, body)
-        }
+        },
+        delete: async (id) => {
+            return axiosInstance.delete(`/admin/promocode/delete/${id}`)
+        },
     },
+    statistics: {
+        popularSongs: async ({dateFrom, dateTo}, page = 0, size = 10) => {
+            return axiosInstance.get(`/admin/statistics/popularTracks`, {
+                params: {
+                    dateFrom,
+                    dateTo,
+                    page,
+                    size
+                }
+            })
+        },
+        sungSongs: async ({dateFrom, dateTo}, page = 0, size = 10) => {
+            return axiosInstance.get(`/admin/statistics/sungSong`, {
+                params: {
+                    dateFrom,
+                    dateTo,
+                    page,
+                    size
+                }
+            })
+        },
+        songSearchAnalytic: async ({dateFrom, dateTo}, page = 0, size = 10) => {
+            return axiosInstance.get(`/admin/statistics/songSearchAnalytics`, {
+                params: {
+                    dateFrom,
+                    dateTo,
+                    page,
+                    size
+                }
+            })
+        },
+        deviceActivity: async ({dateFrom, dateTo}, page = 0, size = 10) => {
+            return axiosInstance.get(`/admin/statistics/deviceActivity`, {
+                params: {
+                    dateFrom,
+                    dateTo,
+                    page,
+                    size
+                }
+            })
+        },
+        songSearchNotResult: async ({dateFrom, dateTo}, page = 0, size = 10) => {
+            return axiosInstance.get(`/admin/statistics/songSearchNotFoundRequests`, {
+                params: {
+                    dateFrom,
+                    dateTo,
+                    page,
+                    size
+                }
+            })
+        },
+        moneyDistribution: async ({dateFrom, dateTo}, page = 0, size = 10) => {
+            return axiosInstance.get(`/admin/statistics/moneyDistribution`, {
+                params: {
+                    dateFrom,
+                    dateTo,
+                    page,
+                    size
+                }
+            })
+        },
+    },
+
     logout: () => {
         return axiosInstance.get('/v1/auth/logout')
     }

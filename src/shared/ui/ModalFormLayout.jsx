@@ -1,9 +1,12 @@
 import {Button, Form, Modal} from "antd";
+import {useState} from "react";
 
 
 const ModalFormLayout = ({
     title, form, onSubmit, open, onClose, children
 }) => {
+    const [isLoading, setLoading] = useState(false)
+
     return (
         <Modal
             open={open}
@@ -13,9 +16,12 @@ const ModalFormLayout = ({
             destroyOnClose={true}
         >
             <Form
+                disabled={isLoading}
                 form={form}
-                onFinish={(val) => {
-                    onSubmit(val)
+                onFinish={async (val) => {
+                    setLoading(true)
+                    await onSubmit(val)
+                    setLoading(false)
                     onClose()
                 }}
                 labelCol={{
@@ -30,7 +36,7 @@ const ModalFormLayout = ({
                     children
                 }
                 <Form.Item>
-                    <Button htmlType={'submit'}>Создать</Button>
+                    <Button disabled={isLoading} htmlType={'submit'}>Создать</Button>
                 </Form.Item>
             </Form>
         </Modal>

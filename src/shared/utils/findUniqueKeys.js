@@ -1,16 +1,28 @@
 
-
 const findUniqueKeys = (oldData, newData) => {
-    const changedValues = {};
 
+    const changedValues = {};
+    console.log(oldData, newData)
     for (const key in oldData) {
-        if (
-            oldData.hasOwnProperty(key) &&
-            newData.hasOwnProperty(key) &&
-            oldData[key] !== newData[key]
-        ) {
-            changedValues[key] = newData[key];
+        if (typeof oldData[key] === 'object') {
+
+           const repeatObj = findUniqueKeys(oldData[key], newData[key])
+
+            if (Object.keys(repeatObj).length === 0) {
+            } else {
+                changedValues[key] = repeatObj
+            }
+
+        } else {
+            if (
+                oldData.hasOwnProperty(key) &&
+                newData.hasOwnProperty(key) &&
+                oldData[key] !== newData[key]
+            ) {
+                changedValues[key] = newData[key];
+            }
         }
+
     }
 
     return changedValues;

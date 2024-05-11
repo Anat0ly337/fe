@@ -21,8 +21,12 @@ export const LoginForm = ({setReg}) => {
                 dispatch(setAuth(true))
                 navigate('/users')
             })
-            .catch(() => {
-                message.error('Произошла ошибка')
+            .catch((e) => {
+                if (e.response.status === 400) {
+                    message.error('Неправильный логин или пароль')
+                } else {
+                    message.error('Произошла ошибка')
+                }
             })
     }
 

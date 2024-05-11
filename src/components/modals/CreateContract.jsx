@@ -25,10 +25,9 @@ const rule = {
     message: 'Обязательное поле'
 }
 
-export const CreateContract = () => {
+export const CreateContract = ({updateRow}) => {
     const [isActive, setActive] = useState(false)
     const [typeDuration, setTypeDuration] = useState(selectOptions[0])
-
     const blobToBase64 = async (blob) => {
         const reader = new FileReader();
         reader.readAsDataURL(blob);
@@ -40,6 +39,7 @@ export const CreateContract = () => {
     };
 
     const handleSubmit = async (val) => {
+
         const requestData = {
             ...val,
             contract_duration_measure: typeDuration.key,
@@ -61,7 +61,8 @@ export const CreateContract = () => {
 
         await apiRequests.advertisement.create(requestData)
             .then(async (res) => {
-
+                updateRow(res.data)
+                message.success('Контракт успешно создан')
             })
             .catch((e) => {
                 message.error('Произошла ошибка')

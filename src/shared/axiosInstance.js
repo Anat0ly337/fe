@@ -14,7 +14,6 @@ axios.defaults.withCredentials = true
 
 axiosInstance.interceptors.request.use(function (config) {
     const token = sessionStorage.getItem('accessToken')
-
     if (!token) {
         store.dispatch(setAuth(false))
     }

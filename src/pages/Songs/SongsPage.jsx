@@ -9,9 +9,18 @@ import {DeleteOutlined} from "@ant-design/icons";
 import {LoadAuthor} from "../../components/modals/LoadAuthor";
 import {LoadAlbum} from "../../components/modals/LoadAlbum";
 import Paragraph from "antd/es/typography/Paragraph";
+import {SongsTable} from "../../components/tables/Songs";
+import {axiosInstance} from "../../shared/axiosInstance";
 
 const SongsPage = () => {
     const [songs, setSongs] = useState([])
+    const [tablePagination, setPagination] = useState({
+        pagination: {
+            current: 1,
+            pageSize: 10,
+            total: 250
+        }
+    })
     const [isLoading, setLoading] = useState(false)
     const dispatch = useDispatch()
 
@@ -40,90 +49,41 @@ const SongsPage = () => {
         setLoading(true)
         await apiRequests.media.get(current - 1, pageSize)
             .then((res) => {
-                setSongs(res.data.songs)
+                setSongs(res.data.searchData.songs)
                 setLoading(false)
             })
 
     }
 
     useEffect(() => {
+            setLoading(true)
             Promise.all([apiRequests.media.get(0, 10), apiRequests.media.allAuthors(), apiRequests.media.allAlbums()])
-                .then(([res1, res2, res3]) => {
-                    setSongs(res1.data.songs)
+                .then(async ([res1, res2, res3]) => {
+                    setPagination({
+                        ...tablePagination,
+                        total: res1.data.totalCount
+                    })
                     dispatch(setAuthors(res2.data))
                     dispatch(setAlbums(res3.data))
+                    return res1.data.searchData.songs
+                })
+                .then((res) => {
+                    res.map(i => {
+                        axiosInstance.get(`https://dligjs37pj7q2.cloudfront.net${i.songImageUri}`, {
+                            responseType: 'blob'
+                        })
+                            .then((data) => {
+                                const imageUrl = URL.createObjectURL(data.data)
+                                setSongs(prev => [...prev, {
+                                    ...i, blobUrl: imageUrl
+                                }])
+                            })
+                    })
                 })
                 .catch(() => {
                     message.error('Произошла ошибка')
                 })
     }, [])
-
-    const columns = [
-        {
-            title: 'Изображение',
-            dataIndex: 'songImageUri',
-            key: 'songImageUri',
-            width: '200px',
-            render: (_, record) => (
-                <Image src={`https://dligjs37pj7q2.cloudfront.net${record.songImageUri}`} width={150} />
-            )
-        },
-        {
-            title: 'Название',
-            dataIndex: 'name',
-            key: 'name',
-            render: (_, record) => (
-                <>
-                    <Popover
-                        title={'Запись'}
-                        content={
-                            <audio controls src={`https://dligjs37pj7q2.cloudfront.net${record.songUri}`} />
-                        }
-                    >
-                        <Paragraph style={{color: '#1677ff'}} >{record.name}</Paragraph>
-                    </Popover>
-                </>
-            )
-        },
-        {
-            title: 'Автор',
-            dataIndex: 'author',
-            key: 'author',
-        },
-        {
-            title: 'Жанр',
-            dataIndex: 'genre',
-            key: 'genre'
-        },
-        {
-            title: 'Альбом',
-            dataIndex: 'album',
-            key: 'album'
-        },
-        {
-            title: 'Рейтинг',
-            dataIndex: 'rating',
-            key: 'rating',
-            render: (_, record) => (
-                <p>{record.rating || 0}</p>
-            )
-        },
-        {
-            title: 'Год выпуска',
-            dataIndex: 'yearIssue',
-            key: 'yearIssue'
-        },
-        {
-            title: 'Действие',
-            key: 'action',
-            render: (_, record) => (
-                <Space>
-                    <EditSong updateRow={updateHandler} data={record} />
-                    <Button onClick={() => deleteHandle(record.id)} danger icon={<DeleteOutlined />} />
-                </Space>
-            )
-        }
-    ]
 
     return (
         <>
@@ -132,22 +92,15 @@ const SongsPage = () => {
                 <LoadSong updateRow={(i) => setSongs(prev => [...prev, i])} />
                 <LoadAlbum />
             </Space>
-            <Table
-                loading={isLoading}
-                columns={columns}
-                pagination={{
-                    pageSize: 5,
-                    total: 50
-                }}
-                dataSource={songs}
-                onChange={handlePagination}
-            />
-            {/*<Pagination*/}
-            {/*    style={{marginTop: '20px'}}*/}
-            {/*    onChange={handlePagination}*/}
-            {/*    pageSize={5}*/}
-            {/*    total={90}*/}
-            {/*/>*/}
+                    <SongsTable
+                        handleTable={handlePagination}
+                        songs={songs}
+                        deleteHandler={deleteHandle}
+                        pagination={tablePagination}
+                        updateHandler={updateHandler}
+                        setSongs={setSongs}
+                    />
+
         </>
     )
 }

@@ -12,6 +12,14 @@ import Cookies from "js-cookie";
 
 const UsersPage = () => {
     const [users, setUsers] = useState([])
+    const [tablePagination, setPagination] = useState({
+        pagination: {
+            current: 1,
+            pageSize: 8,
+            total: 250
+        }
+    })
+
     const {mainSlice} = useSelector(state => state)
     const { Panel } = Collapse
     const updateColumns = (newItem) => {
@@ -38,11 +46,11 @@ const UsersPage = () => {
             title: 'Статус аккаунта',
             dataIndex: 'accountBlocked',
             key: 'accountBlocked',
-            render: (_, {accountBlocked}) => (
+            render: (_, record) => (
                 <Tag
-                    color={!accountBlocked ? 'green' : 'red'}
+                    color={!record?.accountBlocked ? 'green' : 'red'}
                 >
-                    {!accountBlocked ? 'Разблокирован' : 'Заблокирован'}
+                    {!record?.accountBlocked ? 'Разблокирован' : 'Заблокирован'}
                 </Tag>
             )
         },
@@ -50,11 +58,11 @@ const UsersPage = () => {
             title: 'Роль',
             dataIndex: 'userRole',
             key: 'userRole',
-            render: (_, {userRole}) => (
+            render: (_, record) => (
                 <Tag
-                    color={userRole === 'USER' ? 'green' : userRole === 'ADMIN' ? 'red' : 'blue'}
+                    color={record?.userRole === 'USER' ? 'green' : record?.userRole === 'ADMIN' ? 'red' : 'blue'}
                 >
-                    {userRole}
+                    {record?.userRole}
                 </Tag>
             )
         },
@@ -67,12 +75,12 @@ const UsersPage = () => {
             title: 'Подписка',
             dataIndex: 'userSubscription',
             key: 'userSubscription',
-            render: (_, {userSubscription}) => (
-                userSubscription ?
+            render: (_, record) => (
+                record?.userSubscription ?
                     <Tag
                         color={'gold'}
                     >
-                        {userSubscription.subscriptionPlan}
+                        {record?.userSubscription.subscriptionPlan}
                     </Tag> :
                     <Tag
                         color={'default'}
@@ -88,7 +96,7 @@ const UsersPage = () => {
             render: (_, record) => (
                 <Space>
                     <EditUser updateRow={updateColumns} userData={record} />
-                    <UserActivities data={record.userPaymentHistory} />
+                    <UserActivities data={record?.userPaymentHistory} />
                 </Space>
             ),
         },
@@ -98,11 +106,26 @@ const UsersPage = () => {
     useEffect(() => {
         apiRequests.users.get()
             .then((res) => {
-                setUsers(res.data)
+                setUsers(res.data.users)
+                setPagination({
+                    pagination: {
+                        ...tablePagination,
+                        total: res.data.count
+                    }
+
+                })
             })
-        console.log(Cookies.get('jwtToken'))
-        console.log(Cookies.get('accessToken'))
     }, []);
+
+    const handlePagination = (params) => {
+        apiRequests.users.get(10, params.current - 1)
+            .then((res) => {
+                setPagination({
+                    pagination: params
+                })
+                setUsers(res.data.users)
+            })
+    }
 
 
     return (
@@ -115,7 +138,9 @@ const UsersPage = () => {
             <CreateUser updateRow={(i) => setUsers(prev => [...prev, i])} />
 
             <Table
+                pagination={tablePagination.pagination}
                 dataSource={users}
+                onChange={handlePagination}
                 columns={columns}
             />
         </>

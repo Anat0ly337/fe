@@ -17,7 +17,7 @@ export const SongsTable = ({songs, handleTable, pagination, updateHandler, delet
 
         } else {
             if (check) {
-                await axiosInstance.get(`http://karaokeenv2.ap-south-1.elasticbeanstalk.com${data}`, {
+                await axiosInstance.get(`https://dligjs37pj7q2.cloudfront.net${data}`, {
                     responseType: 'blob'
                 })
                     .then((res) => {
@@ -34,7 +34,7 @@ export const SongsTable = ({songs, handleTable, pagination, updateHandler, delet
     }
 
     const getSongNotes = async (url) => {
-        await axiosInstance.get(`http://karaokeenv2.ap-south-1.elasticbeanstalk.com${url}`, {
+        await axiosInstance.get(`https://dligjs37pj7q2.cloudfront.net${url}`, {
             responseType: 'blob'
         })
             .then((res) => {

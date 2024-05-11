@@ -69,7 +69,7 @@ const SongsPage = () => {
                 })
                 .then((res) => {
                     res.map(i => {
-                        axiosInstance.get(`http://karaokeenv2.ap-south-1.elasticbeanstalk.com${i.songImageUri}`, {
+                        axiosInstance.get(`https://dligjs37pj7q2.cloudfront.net${i.songImageUri}`, {
                             responseType: 'blob'
                         })
                             .then((data) => {

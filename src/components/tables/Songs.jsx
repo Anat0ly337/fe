@@ -10,7 +10,6 @@ import {axiosInstance} from "../../shared/axiosInstance";
 export const SongsTable = ({songs, handleTable, pagination, updateHandler, deleteHandler, additionalColumns = [], setSongs}) => {
     const [song, setSong] = useState('')
     const [cacheSong, setCacheSong] = useState()
-    const audioRef = useRef()
     const handleSong = async (check, data) => {
         if (cacheSong === data) {
             return null;
@@ -24,10 +23,6 @@ export const SongsTable = ({songs, handleTable, pagination, updateHandler, delet
                         const imageUrl = URL.createObjectURL(res.data)
                         setSong(imageUrl)
                         setCacheSong(data)
-                        audioRef.current.onplay = () => {
-                            console.log('opa')
-                            audioRef.current.style = `position: relative; top: 0`
-                        }
                     })
             }
         }
@@ -73,13 +68,14 @@ export const SongsTable = ({songs, handleTable, pagination, updateHandler, delet
             render: (_, record) => (
                 <>
                     <Popover
+
                         onOpenChange={(check) => {
                             handleSong(check, record.songUri)
                         }}
                         title={'Запись'}
                         content={
                             <Space direction={'vertical'}>
-                                <audio ref={audioRef} controls src={song} />
+                                <audio controls src={song} />
                                 <Button onClick={() => getSongNotes(record.notesUri)}>Скачать ноты</Button>
                                 <TextSong url={record.songTextUri} />
                             </Space>

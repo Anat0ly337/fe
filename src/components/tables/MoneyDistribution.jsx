@@ -24,9 +24,9 @@ export const MoneyDistribution = ({date}) => {
     useMemo(async () => {
         const { date_from, date_to } = getCurrentMonth()
         if (date.dateFrom || date.dateTo) {
-            await apiRequests.statistics.moneyDistribution({
-                dateFrom: '2024-04-01',
-                dateTo: '2024-06-01'
+            await apiRequests.statistics.moneyDistribution(date ? {...date} : {
+                dateFrom: dayjs(new Date(date_from * 1000)).format('YYYY-MM-DD'),
+                dateTo: dayjs(new Date(date_to * 1000)).format('YYYY-MM-DD')
             })
                 .then((res) => {
                     setSum({

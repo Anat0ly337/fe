@@ -31,26 +31,29 @@ export const SongSearchNotResult = ({date}) => {
 
     useMemo(async () => {
         const {date_from, date_to} = getCurrentMonth()
-        await apiRequests.statistics.songSearchNotResult(
-            date ? {...date} : {
-                dateFrom: dayjs(new Date(date_from * 1000)).format('YYYY-MM-DD'),
-                dateTo: dayjs(new Date(date_to * 1000)).format('YYYY-MM-DD')
-            }
-        )
-            .then((res) => {
-                setPagination({
-                    pagination: {
-                        ...tablePagination,
-                        total: res.data.count
-                    }
-                })
-                setSongs(res.data.data.map(i => (
-                    {
-                        ...i,
-                        requestDate: dayjs(i.requestDate).format('YYYY-MM-DD')
-                    }
+        if (date.dateFrom || date.dateTo) {
+            await apiRequests.statistics.songSearchNotResult(
+                date ? {...date} : {
+                    dateFrom: dayjs(new Date(date_from * 1000)).format('YYYY-MM-DD'),
+                    dateTo: dayjs(new Date(date_to * 1000)).format('YYYY-MM-DD')
+                }
+            )
+                .then((res) => {
+                    setPagination({
+                        pagination: {
+                            ...tablePagination,
+                            total: res.data.count
+                        }
+                    })
+                    setSongs(res.data.data.map(i => (
+                        {
+                            ...i,
+                            requestDate: dayjs(i.requestDate).format('YYYY-MM-DD')
+                        }
                     )))
-            })
+                })
+        }
+
     }, [date.dateFrom, date.dateTo]);
 
     const handlePagination = (params) => {

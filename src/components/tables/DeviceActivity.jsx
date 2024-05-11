@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {apiRequests} from "../../shared/api";
 import {Table} from "antd";
 import {getCurrentMonth} from "../../shared/utils/getCurrentMonth";
@@ -15,22 +15,45 @@ export const DeviceActivity = ({date}) => {
         }
     })
 
-    useEffect(() => {
-        apiRequests.statistics.deviceActivity({
-            dateFrom: '2024-04-01',
-            dateTo: '2024-06-01'
-        })
-            .then((res) => {
-                setPagination({
-                    pagination: {
-                        ...tablePagination,
-                        total: res.data.count
-                    }
-                })
-                setData(res.data.devices)
-            })
+    useMemo(async () => {
+        const { date_from, date_to } = getCurrentMonth()
+        if (date.dateFrom || date.dateTo) {
+            await apiRequests.statistics.deviceActivity(
+                date ? {...date} : {
+                    dateFrom: dayjs(new Date(date_from * 1000)).format('YYYY-MM-DD'),
+                    dateTo: dayjs(new Date(date_to * 1000)).format('YYYY-MM-DD')
+                }
+            )
+                .then((res) => {
+                    setPagination({
+                        pagination: {
+                            ...tablePagination,
+                            total: res.data.count
+                        }
+                    })
+                    setData(res.data.devices)
 
-    }, []);
+                })
+        }
+
+    }, [date.dateFrom, date.dateTo]);
+
+    // useEffect(() => {
+    //     apiRequests.statistics.deviceActivity({
+    //         dateFrom: '2024-04-01',
+    //         dateTo: '2024-06-01'
+    //     })
+    //         .then((res) => {
+    //             setPagination({
+    //                 pagination: {
+    //                     ...tablePagination,
+    //                     total: res.data.count
+    //                 }
+    //             })
+    //             setData(res.data.devices)
+    //         })
+    //
+    // }, []);
 
     const columns = [
         {
@@ -47,7 +70,7 @@ export const DeviceActivity = ({date}) => {
 
     const handlePagination = (params) => {
         const {date_from, date_to} = getCurrentMonth()
-
+        console.log(params)
         apiRequests.statistics.deviceActivity(
             date ? {...date} : {
                 dateFrom: dayjs(new Date(date_from * 1000)).format('YYYY-MM-DD'),

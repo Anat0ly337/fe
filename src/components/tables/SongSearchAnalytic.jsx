@@ -19,25 +19,32 @@ export const SongSearchAnalytic = ({date}) => {
 
     useMemo(async () => {
         const {date_from, date_to} = getCurrentMonth()
-        await apiRequests.statistics.songSearchAnalytic(
-            date ? {...date} : {
-                dateFrom: dayjs(new Date(date_from * 1000)).format('YYYY-MM-DD'),
-                dateTo: dayjs(new Date(date_to * 1000)).format('YYYY-MM-DD')
-            }
-        )
-            .then((res) => {
-                setPagination({
-                    pagination: {
-                        ...tablePagination,
-                        total: res.data.count
-                    }
+
+        if (date.dateFrom || date.dateTo) {
+            await apiRequests.statistics.songSearchAnalytic(
+                date ? {...date} : {
+                    dateFrom: dayjs(new Date(date_from * 1000)).format('YYYY-MM-DD'),
+                    dateTo: dayjs(new Date(date_to * 1000)).format('YYYY-MM-DD')
+                }
+            )
+                .then((res) => {
+                    setPagination({
+                        pagination: {
+                            ...tablePagination,
+                            total: res.data.count
+                        }
+                    })
+                    const newItems = res.data.searchdata.map(i => ({
+                        searchRequestCount: i.seenCount,
+                        ...i.song
+                    }))
+                    setSongs(newItems)
                 })
-                const newItems = res.data.searchdata.map(i => ({
-                    searchRequestCount: i.seenCount,
-                    ...i.song
-                }))
-                setSongs(newItems)
-            })
+                .catch(() => {
+
+                })
+        }
+
     }, [date.dateFrom, date.dateTo]);
 
     const handlePagination = (params) => {

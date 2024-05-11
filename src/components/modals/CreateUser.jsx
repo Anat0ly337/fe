@@ -7,8 +7,10 @@ import ModalFormLayout from "../../shared/ui/ModalFormLayout";
 import dayjs from "dayjs";
 import {SelectRole} from "../../shared/ui/SelectRole";
 
-
-
+const rule = {
+    required: true,
+    message: 'Обязательное поле'
+}
 
 export const CreateUser = ({updateRow}) => {
     const [isActive, setActive] = useState(false)
@@ -33,7 +35,11 @@ export const CreateUser = ({updateRow}) => {
                 message.success('Пользователь успешно создан')
             })
             .catch((e) => {
-                message.error('Произошла ошибка')
+                if (e.response.data.message === 'user or device id already exists') {
+                    message.error('Пользователь с таким именем или устройством уже создан')
+                } else {
+                    message.error('Произошла ошибка')
+                }
             })
     }
 
@@ -46,17 +52,18 @@ export const CreateUser = ({updateRow}) => {
                 footer={[]}
                 onSubmit={handleSubmit}
                 title={'Создание пользователя'}
+
             >
-                <Form.Item label={'Почта'} name={'email'}>
+                <Form.Item rules={[rule]} label={'Почта'} name={'email'}>
                     <Input />
                 </Form.Item>
-                <Form.Item label={'ID приставки'} name={'deviceId'}>
+                <Form.Item rules={[rule]} label={'ID приставки'} name={'deviceId'}>
                     <Input />
                 </Form.Item>
-                <Form.Item initialValue={'USER'} label={'Роль'} name={'userRole'}>
+                <Form.Item rules={[rule]} initialValue={'USER'} label={'Роль'} name={'userRole'}>
                     <SelectRole />
                 </Form.Item>
-                <Form.Item label={'Пароль'} name={'password'}>
+                <Form.Item rules={[rule]} label={'Пароль'} name={'password'}>
                     <Input />
                 </Form.Item>
                 <Form.Item initialValue={isPremium} label={'Премиум'} name={'isPremium'}>

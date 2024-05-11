@@ -9,6 +9,7 @@ import {SearchUsers} from "../../components/forms/SearchUsers";
 import {CreateUser} from "../../components/modals/CreateUser";
 import {axiosInstance} from "../../shared/axiosInstance";
 import Cookies from "js-cookie";
+import {parsePage} from "../../shared/utils/parsePage";
 
 const UsersPage = () => {
     const [users, setUsers] = useState([])
@@ -118,7 +119,8 @@ const UsersPage = () => {
     }, []);
 
     const handlePagination = (params) => {
-        apiRequests.users.get(10, params.current - 1)
+        const page = parsePage(params.current)
+        apiRequests.users.get(10, page)
             .then((res) => {
                 setPagination({
                     pagination: params

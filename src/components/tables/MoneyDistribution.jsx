@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {apiRequests} from "../../shared/api";
 import {getCurrentMonth} from "../../shared/utils/getCurrentMonth";
 import dayjs from "dayjs";
@@ -21,20 +21,23 @@ export const MoneyDistribution = ({date}) => {
         percentSum: 0
     })
 
-    useEffect(() => {
-        apiRequests.statistics.moneyDistribution({
-            dateFrom: '2024-04-01',
-            dateTo: '2024-06-01'
-        })
-            .then((res) => {
-                setSum({
-                    percentSum: res.data.percentSum,
-                    sum: res.data.commonSumm
-                })
-                setData(res.data.authors)
+    useMemo(async () => {
+        const { date_from, date_to } = getCurrentMonth()
+        if (date.dateFrom || date.dateTo) {
+            await apiRequests.statistics.moneyDistribution({
+                dateFrom: '2024-04-01',
+                dateTo: '2024-06-01'
             })
+                .then((res) => {
+                    setSum({
+                        percentSum: res.data.percentSum,
+                        sum: res.data.commonSumm
+                    })
+                    setData(res.data.authors)
+                })
+        }
 
-    }, []);
+    }, [date.dateFrom, date.dateTo]);
 
     const columns = [
         {

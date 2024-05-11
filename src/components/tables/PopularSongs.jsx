@@ -20,24 +20,24 @@ export const PopularSongs = ({date}) => {
     useMemo(async () => {
         const { date_from, date_to } = getCurrentMonth()
 
-        if (!date) {
+        if (date.dateFrom || date.dateTo) {
+            await apiRequests.statistics.popularSongs(
+                date ? {...date} : {
+                    dateFrom: dayjs(new Date(date_from * 1000)).format('YYYY-MM-DD'),
+                    dateTo: dayjs(new Date(date_to * 1000)).format('YYYY-MM-DD')
+                }
+            )
+                .then((res) => {
+                    const newItems = res.data.searchdata.map(i => ({
+                        seenCount: i.seenCount,
+                        ...i.song
+                    }))
+                    setSongs(newItems)
 
+                })
         }
-        await apiRequests.statistics.popularSongs(
-            date ? {...date} : {
-                dateFrom: dayjs(new Date(date_from * 1000)).format('YYYY-MM-DD'),
-                dateTo: dayjs(new Date(date_to * 1000)).format('YYYY-MM-DD')
-            }
-        )
-            .then((res) => {
-                const newItems = res.data.searchdata.map(i => ({
-                    seenCount: i.seenCount,
-                    ...i.song
-                }))
-                setSongs(newItems)
 
-            })
-    }, [date.dateFrom]);
+    }, [date.dateFrom, date.dateTo]);
 
     const handlePagination = (params) => {
         const {date_from, date_to} = getCurrentMonth()

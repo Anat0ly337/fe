@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import {Button, message, Table, Tag} from "antd";
 import {CreatePromocode} from "../../components/modals/CreatePromocode";
 import {DeleteOutlined} from "@ant-design/icons";
+import {parsePage} from "../../shared/utils/parsePage";
 
 
 
@@ -79,7 +80,8 @@ const PromocodesPage = () => {
     }, []);
 
     const handlePagination = (params) => {
-        apiRequests.users.get(10, params.current - 1)
+        const page = parsePage(params.current)
+        apiRequests.users.get(10, page)
             .then((res) => {
                 setPagination({
                     pagination: params

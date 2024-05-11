@@ -2,7 +2,13 @@ import {Layout, Menu, message, Spin} from "antd";
 import Sider from "antd/es/layout/Sider";
 import {Content} from "antd/es/layout/layout";
 import {Navigate, Outlet, useNavigate} from "react-router-dom";
-import {LogoutOutlined, UserOutlined} from "@ant-design/icons";
+import {
+    CustomerServiceOutlined,
+    FontSizeOutlined,
+    LineChartOutlined,
+    LogoutOutlined, PayCircleOutlined, QrcodeOutlined,
+    UserOutlined
+} from "@ant-design/icons";
 import {useDispatch, useSelector} from "react-redux";
 import {Suspense, useEffect} from "react";
 import Cookies from "js-cookie";
@@ -31,22 +37,22 @@ const LayoutPage = () => {
         {
             key: 'advertisement',
             label: 'Реклама',
-            icon: <UserOutlined />
+            icon: <PayCircleOutlined />
         },
         {
             key: 'songs',
             label: 'Песни',
-            icon: <UserOutlined />
+            icon: <CustomerServiceOutlined />
         },
         {
             key: 'statistic',
             label: 'Статистика',
-            icon: <UserOutlined />
+            icon: <LineChartOutlined />
         },
         {
             key: 'promocodes',
             label: 'Промокоды',
-            icon: <UserOutlined />
+            icon: <QrcodeOutlined />
         },
     ]
 

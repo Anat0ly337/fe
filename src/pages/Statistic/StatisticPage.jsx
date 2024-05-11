@@ -45,7 +45,7 @@ const StatisticPage = () => {
             children: <PopularSongs date={date} />,
         },
         {
-            label: 'Успешные запросы',
+            label: 'Статистика по поисковым запросам',
             key: '3',
             children: <SongSearchAnalytic date={date} />,
         },

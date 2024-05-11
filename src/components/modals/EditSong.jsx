@@ -8,11 +8,13 @@ import {useSelector} from "react-redux";
 
 const EditSong = ({data, updateRow}) => {
     const [isActive, setActive] = useState(false)
+    const [isLoading, setLoading] = useState(false)
     const [authorsList, setAuthorList] = useState([])
     const [albumList, setAlbumList] = useState([])
     const {mainSlice} = useSelector(state => state)
 
     const handleSubmit = async (val) => {
+        setLoading(true)
         const formData = new FormData()
         const submitData = {
             ...data,
@@ -38,10 +40,12 @@ const EditSong = ({data, updateRow}) => {
                     ...val
                 })
                 message.success('Аудио успешно изменено')
+                setLoading(false)
                 setActive(false)
             })
             .catch(() => {
                 message.error('Произошла ошибка')
+                setLoading(false)
             })
 
     }
@@ -130,7 +134,7 @@ const EditSong = ({data, updateRow}) => {
                         </Form.Item>
 
                         <Form.Item>
-                            <Button htmlType="submit">Сохранить</Button>
+                            <Button loading={isLoading} htmlType="submit">Сохранить</Button>
                         </Form.Item>
                     </Form>
             </Modal>

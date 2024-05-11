@@ -48,6 +48,13 @@ export const apiRequests = {
             })
 
         },
+        search: async (value) => {
+            return axiosInstance.get(`/v1/search/fullTextSearch?input=${value}&sortBy=DEFAULT&sortMethod=ASC`, {
+                params: {
+                    size: 10
+                }
+            })
+        },
         getText: async (id) => {
             return axiosInstance.get(`/v1/media/${id}/text`)
         }

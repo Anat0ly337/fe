@@ -46,23 +46,22 @@ export const EditUser = ({userData, updateRow}) => {
                     message.success('Данные успешно изменены')
                     setActive(false)
                 })
-        } else {
-            await apiRequests.user.update(userData.id, {
-                userSubscription: {
-                    subscriptionPlan: val.isPremium ? 'PREMIUM' : 'FREE',
-                    expirationDate: dayjs(val.expirationDate).format('YYYY-MM-DD')
-                },
-                ...val
-            })
-                .then((res) => {
-                    updateRow(res.data)
-                    message.success('Данные успешно изменены')
-                    setActive(false)
-                })
-                .catch((err) => {
-                    message.error('Произошла ошибка, пожалуйста повторите попытку позже')
-                })
         }
+        await apiRequests.user.update(userData.id, {
+            userSubscription: {
+                subscriptionPlan: val.isPremium ? 'PREMIUM' : 'FREE',
+                expirationDate: dayjs(val.expirationDate).format('YYYY-MM-DD')
+            },
+            ...val
+        })
+            .then((res) => {
+                updateRow(res.data)
+                message.success('Данные успешно изменены')
+                setActive(false)
+            })
+            .catch((err) => {
+                message.error('Произошла ошибка, пожалуйста повторите попытку позже')
+            })
 
     }
 

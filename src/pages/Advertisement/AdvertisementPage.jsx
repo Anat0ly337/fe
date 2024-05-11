@@ -6,7 +6,8 @@ import {apiRequests} from "../../shared/api";
 import dayjs from "dayjs";
 import {Advertisement} from "../../components/modals/Advertisement";
 import {CreateContract} from "../../components/modals/CreateContract";
-import {DeleteOutlined} from "@ant-design/icons";
+import {DeleteOutlined, LineChartOutlined} from "@ant-design/icons";
+import {parsePage} from "../../shared/utils/parsePage";
 
 
 const AdvertisementPage = () => {
@@ -38,6 +39,17 @@ const AdvertisementPage = () => {
             title: 'Принявший',
             dataIndex: 'adminLoginIssuer',
             key: 'adminLoginIssuer',
+        },
+        {
+            title: 'Описание',
+            dataIndex: 'description',
+            key: 'description',
+        },
+        {
+            title: 'Просмотрено',
+            render: (_, record) => {
+                return <p>{record.advertisementStatistics.seenCount}</p>
+            }
         },
         {
             title: 'Длительность',
@@ -86,7 +98,9 @@ const AdvertisementPage = () => {
     }, []);
 
     const handlePagination = (params) => {
-        apiRequests.advertisement.getAll(10, params.current - 1)
+        const page = parsePage(params.current)
+
+        apiRequests.advertisement.getAll(10, page)
             .then((res) => {
                 setPagination({
                     pagination: params

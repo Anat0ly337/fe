@@ -35,7 +35,7 @@ export const EditUser = ({userData, updateRow}) => {
             return message.info('Вы не сделали никаких изменений')
         }
 
-        if (uniq.userSubscription.isPremium && !val.expirationDate) {
+        if (uniq.userSubscription?.isPremium && !val.expirationDate) {
             return message.info('Укажите дату окончания подписки')
         }
 

@@ -65,6 +65,7 @@ export const CreateContract = ({updateRow}) => {
                 message.success('Контракт успешно создан')
             })
             .catch((e) => {
+                console.log(e)
                 message.error(e.response.message)
             })
     }

@@ -29,11 +29,7 @@ export const LoadAlbum = () => {
                 setActive(false)
             })
             .catch((e) => {
-                if (e.response.data.message === 'Album already exists') {
-                    message.error('Данный автор уже существует')
-                } else {
-                    message.error('Произошла ошибка')
-                }
+                message.error(e.response.data.message || 'Произошла ошибка')
             })
     }
 

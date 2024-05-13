@@ -65,7 +65,7 @@ export const CreateContract = ({updateRow}) => {
                 message.success('Контракт успешно создан')
             })
             .catch((e) => {
-                message.error('Произошла ошибка')
+                message.error(e.response.data.message || 'Произошла ошибка')
             })
     }
 

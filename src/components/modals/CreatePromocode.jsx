@@ -37,7 +37,9 @@ export const CreatePromocode = ({updateRow}) => {
                 updateRow(res.data)
                 message.success('Промокод успешно создан')
             })
-            .catch((e) => message.error('Произошла ошибка'))
+            .catch((e) => {
+                message.error(e.response.data.message || 'Произошла ошибка')
+            })
     }
 
     return (

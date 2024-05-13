@@ -19,11 +19,7 @@ export const LoadAuthor = () => {
                 setActive(false)
             })
             .catch((e) => {
-                if (e.response.data.message === 'Author already exists') {
-                    message.error('Данный автор уже существует')
-                } else {
-                    message.error('Произошла ошибка')
-                }
+                message.error(e.response.data.message || 'Произошла ошибка')
             })
     }
 

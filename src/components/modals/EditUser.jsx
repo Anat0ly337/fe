@@ -59,8 +59,9 @@ export const EditUser = ({userData, updateRow}) => {
                 message.success('Данные успешно изменены')
                 setActive(false)
             })
-            .catch((err) => {
-                message.error('Произошла ошибка, пожалуйста повторите попытку позже')
+            .catch((e) => {
+                message.error(e.response.data.message || 'Произошла ошибка')
+
             })
 
     }

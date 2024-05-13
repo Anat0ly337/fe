@@ -25,11 +25,15 @@ const EditSong = ({data, updateRow}) => {
         for (let key in submitData) {
             if (submitData[key]) {
                 if (typeof submitData[key] === "object") {
-                    formData.delete(key)
                     formData.append(key, new Blob([submitData[key].fileList[0].originFileObj]))
                     formData.append(`${key}ContentType`, submitData[key].file.originFileObj.type)
+                } else {
+                    // Deleted unused items
+                    const deletedItem = key.includes('Uri') || key.includes('blobUrl')
+                    if (!deletedItem) {
+                        formData.append(key, submitData[key])
+                    }
                 }
-                formData.append(key, submitData[key])
             }
         }
 
@@ -43,8 +47,8 @@ const EditSong = ({data, updateRow}) => {
                 setLoading(false)
                 setActive(false)
             })
-            .catch(() => {
-                message.error('Произошла ошибка')
+            .catch((e) => {
+                message.error(e.response.data.message || 'Произошла ошибка')
                 setLoading(false)
             })
 

@@ -35,11 +35,8 @@ export const CreateUser = ({updateRow}) => {
                 message.success('Пользователь успешно создан')
             })
             .catch((e) => {
-                if (e.response.data.message === 'user or device id already exists') {
-                    message.error('Пользователь с таким именем или устройством уже создан')
-                } else {
-                    message.error('Произошла ошибка')
-                }
+                message.error(e.response.data.message || 'Произошла ошибка')
+
             })
     }
 

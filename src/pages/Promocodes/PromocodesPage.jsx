@@ -59,6 +59,11 @@ const PromocodesPage = () => {
             )
         },
         {
+            title: 'ID пользователя',
+            dataIndex: 'userId',
+            key: 'userId'
+        },
+        {
             title: 'Статус',
             dataIndex: 'activated',
             key: 'activated',

@@ -1,6 +1,6 @@
 import {CloudDownloadOutlined, LoadingOutlined} from "@ant-design/icons";
 import {Button, Form, Input, InputNumber, message, Modal, Select, Spin, Upload} from "antd";
-import { useState } from "react";
+import {useEffect, useRef, useState} from "react";
 import {useSelector} from "react-redux";
 import {apiRequests} from "../../shared/api";
 
@@ -11,14 +11,23 @@ const LoadSong = ({updateRow}) => {
     const [isRequestLoading, setRequestLoading] = useState(false)
     const [authors, setAuthorsList] = useState([])
     const [albums, setAlbumList] = useState([])
-
+    const songLoadRef = useRef(null)
     const {mainSlice} = useSelector(state => state)
 
     function onChange({ file, fileList }) {
+        // const progress = songLoadRef.current.querySelector('div.ant-upload-list-item-progress')
+        // if (progress) {
+        //     progress.style = 'display: none'
+        // }
         if (file.status !== 'uploading') {
           console.log(file, fileList);
         }
     }
+
+    useEffect(() => {
+        // .querySelector('div.ant-upload-list-item-progress').display = 'none'
+
+    }, []);
 
     const submitHandler = async (val) => {
         const formData = new FormData()
@@ -37,7 +46,7 @@ const LoadSong = ({updateRow}) => {
                 window.location.reload()
             })
             .catch((e) => {
-                message.error('Произошла ошибка')
+                message.error(e.response.data.message || 'Произошла ошибка')
             })
     }
 
@@ -88,14 +97,17 @@ const LoadSong = ({updateRow}) => {
                 <Form.Item rules={[rule]} label={'Автор'} name={'author'}>
                     <Select options={authors} />
                 </Form.Item>
-                <Form.Item rules={[rule]} label={'Трек'} name={'song'}>
-                    <Upload
-                        accept="audio/mpeg, .mp4, .m4a"
-                        action='/'
-                        onChange={onChange}
-                    >
-                        <Button>Загрузить</Button>
-                    </Upload>
+                <Form.Item  rules={[rule]} label={'Трек'} name={'song'}>
+                    <div ref={songLoadRef}>
+                        <Upload
+                            accept="audio/mpeg, .mp4, .m4a"
+                            action='/'
+                            onChange={onChange}
+                        >
+                            <Button>Загрузить</Button>
+                        </Upload>
+                    </div>
+
                 </Form.Item>
                 <Form.Item rules={[rule]} label={'Текст'} name={'txt'}>
                     <Upload

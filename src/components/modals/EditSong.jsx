@@ -106,7 +106,7 @@ const EditSong = ({data, updateRow}) => {
                         </Form.Item>
                         <Form.Item label='Изображение' name='img'>
                             <Upload
-                                accept="image/*"
+                                accept=".jpg, image/jpeg, .jpeg, image/jpeg"
                                 action='/'
                             >
                                 <Button>Загрузить</Button>
@@ -114,7 +114,7 @@ const EditSong = ({data, updateRow}) => {
                         </Form.Item>
                         <Form.Item label='Ноты' name='notes'>
                             <Upload
-                                accept="text/*, image/*"
+                                accept="audio/midi"
                                 action='/'
                             >
                                 <Button>Загрузить</Button>
@@ -122,7 +122,7 @@ const EditSong = ({data, updateRow}) => {
                         </Form.Item>
                         <Form.Item label='Текст' name='textFile'>
                             <Upload
-                                accept="text/*, image/*"
+                                accept="text/plain"
                                 action='/'
                             >
                                 <Button>Загрузить</Button>
@@ -130,7 +130,7 @@ const EditSong = ({data, updateRow}) => {
                         </Form.Item>
                         <Form.Item label='Аудио' name='song'>
                             <Upload
-                                accept="audio/*"
+                                accept="audio/mpeg, .mp4, .m4a"
                                 action='/'
                             >
                                 <Button>Загрузить</Button>

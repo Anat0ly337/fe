@@ -103,6 +103,7 @@ const LoadSong = ({updateRow}) => {
                             accept="audio/mpeg, .mp4, .m4a"
                             action='/'
                             onChange={onChange}
+                            showUploadList={false}
                         >
                             <Button>Загрузить</Button>
                         </Upload>

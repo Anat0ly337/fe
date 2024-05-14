@@ -11,14 +11,9 @@ const LoadSong = ({updateRow}) => {
     const [isRequestLoading, setRequestLoading] = useState(false)
     const [authors, setAuthorsList] = useState([])
     const [albums, setAlbumList] = useState([])
-    const songLoadRef = useRef(null)
     const {mainSlice} = useSelector(state => state)
 
     function onChange({ file, fileList }) {
-        // const progress = songLoadRef.current.querySelector('div.ant-upload-list-item-progress')
-        // if (progress) {
-        //     progress.style = 'display: none'
-        // }
         if (file.status !== 'uploading') {
           console.log(file, fileList);
         }
@@ -98,17 +93,13 @@ const LoadSong = ({updateRow}) => {
                     <Select options={authors} />
                 </Form.Item>
                 <Form.Item  rules={[rule]} label={'Трек'} name={'song'}>
-                    <div ref={songLoadRef}>
-                        <Upload
-                            accept="audio/mpeg, .mp4, .m4a"
-                            action='/'
-                            onChange={onChange}
-                            showUploadList={false}
-                        >
-                            <Button>Загрузить</Button>
-                        </Upload>
-                    </div>
-
+                    <Upload
+                        accept="audio/mpeg, .mp4, .m4a"
+                        action='/'
+                        onChange={onChange}
+                    >
+                        <Button>Загрузить</Button>
+                    </Upload>
                 </Form.Item>
                 <Form.Item rules={[rule]} label={'Текст'} name={'txt'}>
                     <Upload

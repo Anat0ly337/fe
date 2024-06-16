@@ -1,20 +1,20 @@
 import { useEffect, useState } from "react"
 import { apiRequests } from "../../shared/api"
-import {Button, Form, Image, Input, message, Pagination, Popover, Space, Spin, Table} from "antd"
-import EditSong from "../../components/modals/EditSong"
-import LoadSong from "../../components/modals/LoadSong"
-import {useDispatch} from "react-redux";
-import {setAlbums, setAuthors} from "../../store/main";
-import {DeleteOutlined, SearchOutlined} from "@ant-design/icons";
-import {LoadAuthor} from "../../components/modals/LoadAuthor";
-import {LoadAlbum} from "../../components/modals/LoadAlbum";
+import {Button, Flex, Form, Image, Input, message, Pagination, Popover, Space, Spin, Table, Tag} from "antd"
+import {useDispatch, useSelector} from "react-redux";
+import {DeleteOutlined, EditOutlined, SearchOutlined} from "@ant-design/icons";
 import Paragraph from "antd/es/typography/Paragraph";
 import {SongsTable} from "../../components/tables/Songs";
 import {axiosInstance} from "../../shared/axiosInstance";
 import {parsePage} from "../../shared/utils/parsePage";
+import {Link, useSearchParams} from "react-router-dom";
+import Title from "antd/es/typography/Title";
+import ImageColumn from "../../shared/ui/ImageColumn";
+import {TextSong} from "../../components/modals/TextSong";
+import {SongAdditionalActions} from "../../shared/ui/SongAdditionalActions";
 
 const SongsPage = () => {
-    const [songs, setSongs] = useState([])
+    const [songs, setSongs] = useState(null)
     const [tablePagination, setPagination] = useState({
         pagination: {
             current: 1,
@@ -22,10 +22,13 @@ const SongsPage = () => {
             total: 250
         }
     })
+    const [data, setData] = useState([])
     const [isLoading, setLoading] = useState(false)
     const dispatch = useDispatch()
+    const {mainSlice} = useSelector(state => state)
+    const [searchParams, setSearchParams] = useSearchParams()
 
-    const deleteHandle = async (id) => {
+    const deleteHandler = async (id) => {
         await apiRequests.media.delete(id)
             .then((res) => {
                 setSongs((prev) => prev.filter((i) => i.id !== id))
@@ -36,64 +39,38 @@ const SongsPage = () => {
             })
     }
 
-    const getData = async () => {
-        setLoading(true)
-        Promise.all([apiRequests.media.get(0, 10), apiRequests.media.allAuthors(), apiRequests.media.allAlbums()])
-            .then(async ([res1, res2, res3]) => {
-                setPagination({
-                    ...tablePagination,
-                    total: res1.data.totalCount
-                })
-                dispatch(setAuthors(res2.data))
-                dispatch(setAlbums(res3.data))
-                return res1.data.searchData.songs
-            })
-            .then((res) => {
-                res.map(i => {
-                    axiosInstance.get(`https://dligjs37pj7q2.cloudfront.net${i.songImageUri}`, {
-                        responseType: 'blob'
-                    })
-                        .then((data) => {
-                            const imageUrl = URL.createObjectURL(data.data)
-                            setSongs(prev => [...prev, {
-                                ...i, blobUrl: imageUrl
-                            }])
-                        })
-                })
-            })
-            .catch(() => {
-                message.error('Произошла ошибка')
-            })
-    }
+    useEffect(() => {
 
-    const updateHandler = (newItem) => {
-        setSongs(prev => [...prev].map(i => {
-            if (i.id === newItem.id) {
-                return newItem
-            } else {
-                return i
-            }
-        }))
-    }
+    }, []);
+
 
     const handlePagination = async ({current, pageSize}) => {
         const page = parsePage(current)
         setLoading(true)
         await apiRequests.media.get(page, pageSize)
             .then((res) => {
-                setSongs(res.data.searchData.songs)
+                setSongs(res.data.searchData.songs.map(i => ({song: i})))
                 setLoading(false)
             })
 
     }
 
-    useEffect(() => {
-        getData()
-    }, [])
+    const columnsAuthor = [
+        {
+            key: 'authorFullName',
+            dataIndex: 'authorFullName',
+            title: 'Имя автора',
+            render: (row, record) => (
+                <>
+                    <Link to={`/songs/author/${record.id}`} >{row}</Link>
+                </>
+            )
+        }
+    ]
 
-    const handleSearch = async (val) => {
-        if (!val.search) {
-            await apiRequests.media.get(0, 10)
+    const query = async (requestUrl, value) => {
+        if (value) {
+            await requestUrl(value)
                 .then((res) => {
                     setPagination({
                         ...tablePagination,
@@ -109,12 +86,32 @@ const SongsPage = () => {
                         })
                             .then((data) => {
                                 const imageUrl = URL.createObjectURL(data.data)
-                                setSongs(prev => [...prev, {
-                                    ...i, blobUrl: imageUrl
-                                }])
+                                setSongs(prev => [...prev, i])
                             })
                     })
                 })
+        } else {
+            await requestUrl(0, 10)
+                .then((res) => {
+                    setPagination({
+                        ...tablePagination,
+                        total: res.data.totalCount
+                    })
+                    setSongs(res.data.searchData.songs)
+                    return res.data.searchData.songs
+                })
+        }
+    }
+
+    const handleSearch = async (val) => {
+        if (!val.search) {
+            if (val.search_by_file ) {
+                await query(apiRequests.media.searchByFile, val.search_by_file)
+
+            } else {
+                await query(apiRequests.media.get)
+
+            }
         } else {
             await apiRequests.media.search(val.search)
                 .then((res) => {
@@ -142,31 +139,153 @@ const SongsPage = () => {
 
     }
 
+    const columns = [
+        {
+            title: 'Изображение',
+            dataIndex: 'songImageUri',
+            key: 'songImageUri',
+            width: '200px',
+            render: (_, record) => {
+                return <ImageColumn id={{url: record?.songImageUri}} />
+            }
+        },
+        {
+            title: 'Название',
+            dataIndex: 'name',
+            key: 'name',
+            render: (_, record) => (
+                <>
+                    <Popover
+                        title={'Запись'}
+                        content={
+                            <SongAdditionalActions song={record} />
+                        }
+
+                    >
+                        <Paragraph style={{color: '#1677ff'}} >{record.name}</Paragraph>
+                    </Popover>
+                </>
+            )
+        },
+        {
+            title: 'Автор',
+            dataIndex: 'author',
+            key: 'author',
+            render: (_, record) => (
+                <>
+                    {
+                        record.author.map(i => <p key={i}>{i}</p>)
+                    }
+                </>
+
+            )
+        },
+        {
+            title: 'Жанр',
+            dataIndex: 'genre',
+            key: 'genre',
+            render: (_, record) => (
+                <p>{record.genre}</p>
+            )
+        },
+        {
+            title: 'Альбом',
+            dataIndex: 'album',
+            key: 'album',
+            render: (_, record) => (
+                <p>{record.album}</p>
+            )
+        },
+        {
+            title: 'Рейтинг',
+            dataIndex: 'rating',
+            key: 'rating',
+            render: (_, record) => (
+                <p>{record.rating || 0}</p>
+            )
+        },
+        {
+            title: 'Год выпуска',
+            dataIndex: 'yearIssue',
+            key: 'yearIssue',
+            render: (_,record) => (
+                <p>{record.yearIssue}</p>
+            )
+        },
+        {
+            title: 'Теги',
+            dataIndex: 'tags',
+            key: 'tags',
+            render: (_, record) => {
+                const tags = record.tags?.split(',').filter((i) => i !== '')
+
+                if (tags && tags.length > 0) {
+                    return (
+                        <Flex wrap={'wrap'} gap={6}>
+                            {
+                                tags.map((i) => (
+                                    <Tag key={i} color={'geekblue'}>{i}</Tag>
+                                ))
+                            }
+                        </Flex>
+                    )
+                }
+
+            }
+        },
+        {
+            title: 'Название файла',
+            dataIndex: 'tags',
+            key: 'tags',
+            render: (_, record) => <Paragraph>{record.originalFileName}</Paragraph>
+        },
+        {
+            title: 'Действие',
+            key: 'action',
+            render: (_, record) => (
+                <Space>
+                    <Link to={`/songs/edit/${record.id}`}>
+                        <Button icon={<EditOutlined />} />
+                    </Link>
+                    <Button onClick={() => deleteHandler(record.id)} danger icon={<DeleteOutlined />} />
+                </Space>
+            )
+        }]
+
     return (
         <>
-            <Space style={{marginBottom: '20px'}}>
-                <LoadAuthor />
-                <LoadSong updateRow={(i) => setSongs(prev => [...prev, i])} />
-                <LoadAlbum />
-            </Space>
             <Form
                 onFinish={handleSearch}
             >
                 <Form.Item name={'search'}>
-                    <Input />
+                    <Input placeholder={'Поиск по ID'} />
+                </Form.Item>
+                <Form.Item name={'search_by_file'}>
+                    <Input placeholder={'Поиск по названию файла трека'} />
                 </Form.Item>
                 <Form.Item>
                     <Button icon={<SearchOutlined />} htmlType={'submit'}>Поиск</Button>
                 </Form.Item>
             </Form>
-            <SongsTable
-                handleTable={handlePagination}
-                songs={songs}
-                deleteHandler={deleteHandle}
-                pagination={tablePagination}
-                updateHandler={updateHandler}
-                setSongs={setSongs}
-            />
+            {
+                songs !== null ? (
+                    <Table
+                        pagination={{
+                            pageSize: 5
+                        }}
+                        columns={columns}
+                        dataSource={songs}
+                    />
+                ) : (
+                    <Table
+                        dataSource={mainSlice.authors}
+
+                        columns={columnsAuthor}
+                    />
+                )
+            }
+
+
 
         </>
     )

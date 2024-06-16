@@ -1,14 +1,16 @@
 import {Button, Image, Popover, Space, Table} from "antd";
 import Paragraph from "antd/es/typography/Paragraph";
-import EditSong from "../modals/EditSong";
-import {DeleteOutlined} from "@ant-design/icons";
+import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
 import {TextSong} from "../modals/TextSong";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import {axiosInstance} from "../../shared/axiosInstance";
+import {Link} from "react-router-dom";
+import ImageColumn from "../../shared/ui/ImageColumn";
+import {SongAdditionalActions} from "../../shared/ui/SongAdditionalActions";
 
 
-export const SongsTable = ({songs, handleTable, pagination, updateHandler, deleteHandler, additionalColumns = [], setSongs}) => {
-    const [song, setSong] = useState('')
+export const SongsTable = ({songs, handleTable, pagination, updateHandler, deleteHandler, additionalColumns = [], setSongs, isLoading}) => {
+    const [currentSong, setSong] = useState('')
     const [cacheSong, setCacheSong] = useState()
     const handleSong = async (check, data) => {
         if (cacheSong === data) {
@@ -58,7 +60,7 @@ export const SongsTable = ({songs, handleTable, pagination, updateHandler, delet
             key: 'songImageUri',
             width: '200px',
             render: (_, record) => {
-                return <Image src={`${record.blobUrl}`} width={150}/>
+                return <ImageColumn id={{url: record?.songImageUri}} />
             }
         },
         {
@@ -66,41 +68,39 @@ export const SongsTable = ({songs, handleTable, pagination, updateHandler, delet
             dataIndex: 'name',
             key: 'name',
             render: (_, record) => (
-                <>
-                    <Popover
-
-                        onOpenChange={(check) => {
-                            handleSong(check, record.songUri)
-                        }}
-                        title={'Запись'}
-                        content={
-                            <Space direction={'vertical'}>
-                                <audio controls src={song} />
-                                <Button onClick={() => getSongNotes(record.notesUri)}>Скачать ноты</Button>
-                                <TextSong url={record.songTextUri} />
-                            </Space>
-                        }
-
-                    >
-                        <Paragraph style={{color: '#1677ff'}} >{record.name}</Paragraph>
-                    </Popover>
-                </>
+                <Popover content={<SongAdditionalActions song={record} />}>
+                    <Button type={'link'}>{record.name}</Button>
+                </Popover>
             )
         },
         {
             title: 'Автор',
             dataIndex: 'author',
             key: 'author',
+            render: (_, record) => (
+                <>
+                    {
+                        record.author.map(i => <p key={i}>{i}</p>)
+                    }
+                </>
+
+            )
         },
         {
             title: 'Жанр',
             dataIndex: 'genre',
-            key: 'genre'
+            key: 'genre',
+            render: (_, record) => (
+                <p>{record.genre}</p>
+            )
         },
         {
             title: 'Альбом',
             dataIndex: 'album',
-            key: 'album'
+            key: 'album',
+            render: (_, record) => (
+                <p>{record.album}</p>
+            )
         },
         {
             title: 'Рейтинг',
@@ -113,7 +113,10 @@ export const SongsTable = ({songs, handleTable, pagination, updateHandler, delet
         {
             title: 'Год выпуска',
             dataIndex: 'yearIssue',
-            key: 'yearIssue'
+            key: 'yearIssue',
+            render: (_, record) => (
+                <p>{record.yearIssue}</p>
+            )
         },
         ...additionalColumns,
         {
@@ -121,7 +124,9 @@ export const SongsTable = ({songs, handleTable, pagination, updateHandler, delet
             key: 'action',
             render: (_, record) => (
                 <Space>
-                    <EditSong updateRow={updateHandler} data={record} />
+                    <Link state={{data: record}} to={`/songs/edit/${record.id}`}>
+                        <Button icon={<EditOutlined />} />
+                    </Link>
                     <Button onClick={() => deleteHandler(record.id)} danger icon={<DeleteOutlined />} />
                 </Space>
             )
@@ -130,7 +135,7 @@ export const SongsTable = ({songs, handleTable, pagination, updateHandler, delet
 
     return (
         <Table
-            // loading={isLoading}
+            loading={isLoading}
             columns={columns}
             onChange={handleTable}
             pagination={pagination}

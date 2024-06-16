@@ -4,71 +4,25 @@ import {getCurrentMonth} from "../../shared/utils/getCurrentMonth";
 import dayjs from "dayjs";
 import {Card, Space, Table} from "antd";
 import Paragraph from "antd/es/typography/Paragraph";
+import Holders from "../../pages/Holders/Holders";
 
 
 export const MoneyDistribution = ({date}) => {
-
-    const [data, setData] = useState([])
-    const [tablePagination, setPagination] = useState({
-        pagination: {
-            current: 1,
-            pageSize: 8,
-            total: 0
-        }
-    })
     const [wholeSum, setSum] = useState({
         sum: 0,
         percentSum: 0
     })
 
-    useMemo(async () => {
-        const { date_from, date_to } = getCurrentMonth()
-        if (date.dateFrom || date.dateTo) {
-            await apiRequests.statistics.moneyDistribution(date ? {...date} : {
-                dateFrom: dayjs(new Date(date_from * 1000)).format('YYYY-MM-DD'),
-                dateTo: dayjs(new Date(date_to * 1000)).format('YYYY-MM-DD')
-            })
-                .then((res) => {
-                    setSum({
-                        percentSum: res.data.percentSum,
-                        sum: res.data.commonSumm
-                    })
-                    setData(res.data.authors)
-                })
-        }
-
-    }, [date.dateFrom, date.dateTo]);
-
-    const columns = [
-        {
-            title: 'ID автора',
-            dataIndex: 'id',
-            key: 'id',
-            width: '15%'
-        },
-        {
-            title: 'Имя автора',
-            dataIndex: 'authorFullName',
-            key: 'authorFullName'
-        },
-
-    ]
-
-    const handlePagination = (params) => {
-        const {date_from, date_to} = getCurrentMonth()
-
-        apiRequests.statistics.deviceActivity(
-            date ? {...date} : {
-                dateFrom: dayjs(new Date(date_from * 1000)).format('YYYY-MM-DD'),
-                dateTo: dayjs(new Date(date_to * 1000)).format('YYYY-MM-DD')
-            }, params.current - 1, 10)
+    useEffect(() => {
+        apiRequests.statistics.moneyDistribution()
             .then((res) => {
-                setPagination({
-                    pagination: params
+                setSum({
+                    percentSum: res.data.percentSum,
+                    sum: res.data.commonSumm
                 })
-                setData(res.data)
             })
-    }
+
+    }, []);
 
     return (
         <>
@@ -76,12 +30,7 @@ export const MoneyDistribution = ({date}) => {
                 <Paragraph>Доход от подписок: {wholeSum.sum}</Paragraph>
                 <Paragraph>Процент авторам: {wholeSum.percentSum}</Paragraph>
             </Card>
-            <Table
-                pagination={tablePagination}
-                onChange={handlePagination}
-                columns={columns}
-                dataSource={data}
-            />
+            <Holders />
         </>
     )
 }

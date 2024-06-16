@@ -10,6 +10,7 @@ import {CreateUser} from "../../components/modals/CreateUser";
 import {axiosInstance} from "../../shared/axiosInstance";
 import Cookies from "js-cookie";
 import {parsePage} from "../../shared/utils/parsePage";
+import {Link} from "react-router-dom";
 
 const UsersPage = () => {
     const [users, setUsers] = useState([])
@@ -96,7 +97,7 @@ const UsersPage = () => {
             key: 'action',
             render: (_, record) => (
                 <Space>
-                    <EditUser updateRow={updateColumns} userData={record} />
+                    <Link state={{userData: record}} to={`/users/edit/${record.id}`}><Button icon={<EditOutlined />} /></Link>
                     <UserActivities data={record?.userPaymentHistory} />
                 </Space>
             ),

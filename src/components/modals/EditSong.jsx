@@ -1,18 +1,23 @@
 import { EditOutlined } from "@ant-design/icons";
-import {Button, Form, Input, InputNumber, message, Modal, Select, Upload} from "antd";
+import {Button, Form, Input, InputNumber, message, Modal, Select, Spin, Switch, Upload} from "antd";
 import {useEffect, useState} from "react";
 import {apiRequests} from "../../shared/api";
 import {axiosInstance} from "../../shared/axiosInstance";
 import {useSelector} from "react-redux";
+import CreatingPage from "../../pages/CreatingPage/CreatingPage";
+import {useLocation, useParams} from "react-router-dom";
+import findUniqueKeys from "../../shared/utils/findUniqueKeys";
+import {SelectAuthors} from "../../shared/ui/SelectAuthors";
 
 
-const EditSong = ({data, updateRow}) => {
+const EditSong = ({}) => {
+    const [data, setData] = useState({})
     const [isActive, setActive] = useState(false)
-    const [isLoading, setLoading] = useState(false)
-    const [authorsList, setAuthorList] = useState([])
+    const [isLoading, setLoading] = useState(true)
     const [albumList, setAlbumList] = useState([])
+    const {id} = useParams()
     const {mainSlice} = useSelector(state => state)
-
+    const {state} = useLocation()
     const handleSubmit = async (val) => {
         setLoading(true)
         const formData = new FormData()
@@ -21,12 +26,29 @@ const EditSong = ({data, updateRow}) => {
             ...val
         }
 
+        const iterateData = Object.keys(submitData).map((i) => {
+            if (i !== undefined) {
+                return i
+            }
+        })
         console.log(submitData)
         for (let key in submitData) {
+            console.log(submitData[key])
             if (submitData[key]) {
                 if (typeof submitData[key] === "object") {
-                    formData.append(key, new Blob([submitData[key].fileList[0].originFileObj]))
-                    formData.append(`${key}ContentType`, submitData[key].file.originFileObj.type)
+                    switch (key) {
+                        case 'author':
+                            formData.append('authors', Array.from(new Set(val[key])))
+                            break;
+                        case 'tags':
+                            formData.append('tags', Array.from(new Set(val[key])))
+                            break;
+                        default:
+                            console.log(submitData[key])
+                            formData.append(key, new Blob([submitData[key].fileList[0].originFileObj]))
+                            formData.append(`${key}ContentType`, submitData[key].file.originFileObj.type)
+                            break;
+                    }
                 } else {
                     // Deleted unused items
                     const deletedItem = key.includes('Uri') || key.includes('blobUrl')
@@ -39,10 +61,6 @@ const EditSong = ({data, updateRow}) => {
 
         await apiRequests.media.update(data.id, formData)
             .then((res) => {
-                updateRow({
-                    ...data,
-                    ...val
-                })
                 message.success('Аудио успешно изменено')
                 setLoading(false)
                 setActive(false)
@@ -55,37 +73,35 @@ const EditSong = ({data, updateRow}) => {
     }
 
     const showModal = () => {
-        setAuthorList(
-            [...mainSlice.authors].map(i => ({
-                key: i.id,
-                value: i.authorFullName
-            }))
-        )
+        setLoading(true)
+        const currentItem = mainSlice.songs.find(i => i.id == id)
+        if (state) {
+            setData({
+                ...state.data,
+            })
+        }
+
         setAlbumList(
-            [...mainSlice.albums].map(i => ({
+            mainSlice.albums.map(i => ({
                 key: i.id,
                 value: i.name
             }))
         )
-        setActive(true)
+        setLoading(false)
     }
+    useEffect(() => {
+        showModal()
 
+    }, [])
     return (
         <>
-            <Button onClick={showModal} icon={<EditOutlined />}></Button>
-                <Modal 
-                    onCancel={() => setActive(false)}
-                    open={isActive}
-                    footer={[]}
+        {
+            isLoading ? <Spin /> : (
+                <CreatingPage
                     title={'Редактирование аудио'}
                 >
-                    <Form 
-                        labelCol={{
-                            span: 4,
-                        }}
-                        wrapperCol={{
-                            span: 20,
-                        }}
+                    <Form
+                        style={{ maxWidth: 750, margin: '0 auto' }}
                         initialValues={data}
                         onFinish={handleSubmit}
                     >
@@ -93,7 +109,10 @@ const EditSong = ({data, updateRow}) => {
                             <Input />
                         </Form.Item>
                         <Form.Item label='Автор' name='author'>
-                            <Select options={authorsList} />
+                            <SelectAuthors />
+                        </Form.Item>
+                        <Form.Item label='Теги' name='tags'>
+                            <Input />
                         </Form.Item>
                         <Form.Item label='Жанр' name='genre'>
                             <Input  />
@@ -103,6 +122,9 @@ const EditSong = ({data, updateRow}) => {
                         </Form.Item>
                         <Form.Item label='Год' name='yearIssue'>
                             <InputNumber />
+                        </Form.Item>
+                        <Form.Item label='Ненормативная лексика' name='hasProfanity'>
+                            <Switch />
                         </Form.Item>
                         <Form.Item label='Изображение' name='img'>
                             <Upload
@@ -141,7 +163,10 @@ const EditSong = ({data, updateRow}) => {
                             <Button loading={isLoading} htmlType="submit">Сохранить</Button>
                         </Form.Item>
                     </Form>
-            </Modal>
+                </CreatingPage>
+            )
+        }
+                
         </>
     )
 };

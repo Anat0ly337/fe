@@ -1,9 +1,10 @@
 import {Button, Form, Input, message, Modal, Select, Upload} from "antd";
 import {UserAddOutlined} from "@ant-design/icons";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {apiRequests} from "../../shared/api";
 import {useDispatch, useSelector} from "react-redux";
 import {setAlbums, setAuthors} from "../../store/main";
+import CreatingPage from "../../pages/CreatingPage/CreatingPage";
 
 
 export const LoadAlbum = () => {
@@ -33,33 +34,28 @@ export const LoadAlbum = () => {
             })
     }
 
-    const showModal = () => {
+    useEffect(() => {
         setAuthorList(
             [...mainSlice.authors].map(i => ({
                 key: i.id,
                 value: i.authorFullName
             }))
         )
-        setActive(true)
-    }
+    }, [mainSlice.authors]);
 
     return (
         <>
-            <Button onClick={showModal} type={'primary'} icon={<UserAddOutlined />}>Добавить альбом</Button>
-            <Modal
+            <CreatingPage
                 title={'Добавление альбома'}
-                footer={[]}
-                onCancel={() => setActive(false)}
-                open={isActive}
             >
                 <Form
                     labelCol={{
-                        span: 6,
+                        span: 10,
                     }}
                     wrapperCol={{
-                        span: 20,
+                        span: 5,
                     }}
-                    style={{marginTop: '25px'}}
+                    style={{width: '100%'}}
                     onFinish={submitHandler}
                 >
                     <Form.Item rules={[{required: true, message: 'Обязательное поле'}]} label={'Название'} name={'name'}>
@@ -79,11 +75,14 @@ export const LoadAlbum = () => {
                             <Button>Загрузить</Button>
                         </Upload>
                     </Form.Item>
-                    <Form.Item>
-                        <Button htmlType={'submit'}>Добавить</Button>
+                    <Form.Item
+                        wrapperCol={{ span: 24 }}
+                        style={{ textAlign: 'center'}}
+                    >
+                        <Button style={{width: '15%'}} htmlType={'submit'}>Добавить</Button>
                     </Form.Item>
                 </Form>
-            </Modal>
+            </CreatingPage>
         </>
     )
 }

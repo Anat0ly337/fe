@@ -4,44 +4,44 @@ import {axiosInstance} from "./axiosInstance";
 export const apiRequests = {
     users: {
         get: async (size = 10, page = 0) => {
-            return axiosInstance.get(`/admin/users?size=${size}&page=${page}`)
+            return axiosInstance.get(`/api/admin/users?size=${size}&page=${page}`)
         },
         getByIdDevice: async (id) => {
-            return axiosInstance.get(`/admin/users/searchUserByDeviceId/${id}`)
+            return axiosInstance.get(`/api/admin/users/searchUserByDeviceId/${id}`)
         },
         getByEmail: async (email) => {
-            return axiosInstance.get(`/admin/users/searchUserByEmail/${email}`)
+            return axiosInstance.get(`/api/admin/users/searchUserByEmail/${email}`)
         }
     },
     user: {
         update: async (id, body) => {
-            return axiosInstance.put(`/admin/users/${id}`, body)
+            return axiosInstance.put(`/api/admin/users/${id}`, body)
         },
         updateStatus: async (id, status) => {
-            return axiosInstance.put(`/admin/users/blockUser/${id}/${status}`)
+            return axiosInstance.put(`/api/admin/users/blockUser/${id}/${status}`)
         },
         create: async (body) => {
-            return axiosInstance.post(`/admin/users/create`, body)
+            return axiosInstance.post(`/api/admin/users/create`, body)
         }
     },
     media: {
         get: async (page, size) => {
-            return axiosInstance.get(`/admin/media?page=${page}&size=${size}`)
+            return axiosInstance.get(`/api/admin/media?page=${page}&size=${size}`)
         },
         allAuthors: async () => {
-            return axiosInstance.get(`/admin/media/authors`)
+            return axiosInstance.get(`/api/admin/media/authors`)
         },
         allAlbums: async () => {
-            return axiosInstance.get(`/admin/media/albums`)
+            return axiosInstance.get(`/api/admin/media/albums`)
         },
         create: async (body) => {
-            return axiosInstance.postForm(`/admin/media/upload`, body)
+            return axiosInstance.postForm(`/api/admin/media/upload`, body)
         },
         delete: async (id) => {
-            return axiosInstance.delete(`/admin/media/${id}`)
+            return axiosInstance.delete(`/api/admin/media/${id}`)
         },
         update: async (id, body) => {
-            return axiosInstance.put(`/admin/media/upload/${id}`, body, {
+            return axiosInstance.put(`/api/admin/media/upload/${id}`, body, {
                 headers: {
                     "Content-Type": "multipart/form-data"
                 }
@@ -49,55 +49,62 @@ export const apiRequests = {
 
         },
         search: async (value) => {
-            return axiosInstance.get(`/v1/search/fullTextSearch?input=${value}&sortBy=DEFAULT&sortMethod=ASC`, {
+            return axiosInstance.get(`/api/v1/search/fullTextSearch?input=${value}&sortBy=DEFAULT&sortMethod=ASC`, {
                 params: {
                     size: 10
                 }
             })
         },
         getText: async (id) => {
-            return axiosInstance.get(`/v1/media/${id}/text`)
+            return axiosInstance.get(`/api/v1/media/${id}/text`)
+        },
+        searchByFile: async (name) => {
+            return axiosInstance.get(`/v2/api/admin/media/getSongByOriginalFilename/${name}`)
         }
     },
     authors: {
         create: async (body) => {
-            return axiosInstance.post(`/admin/media/createAuthor`, body)
+            return axiosInstance.post(`/api/admin/media/createAuthor`, body)
+        },
+        getSongs: async (id) => {
+            return axiosInstance.get(`/api/admin/statistics/getSongsStatisticsByAuthorId/${id}`)
+
         }
     },
     albums: {
         create: async (body) => {
-            return axiosInstance.postForm(`/admin/media/createAlbum`, body)
+            return axiosInstance.postForm(`/api/admin/media/createAlbum`, body)
         }
     },
     advertisement: {
         getAll: async (size = 10, page = 0) => {
-            return axiosInstance.get(`/admin/advertisement/contracts`, {
+            return axiosInstance.get(`/api/admin/advertisement/contracts`, {
                 params: {
                     page, size
                 }
             })
         },
         create: async (body) => {
-            return axiosInstance.post(`/admin/advertisement/contract`, body)
+            return axiosInstance.post(`/api/admin/advertisement/contract`, body)
         },
         delete: async (id) => {
-            return axiosInstance.delete(`/admin/advertisement/delete/${id}`)
+            return axiosInstance.delete(`/api/admin/advertisement/delete/${id}`)
         }
     },
     promocode: {
         getAll: async () => {
-            return axiosInstance.get(`/admin/promocode/allCodes`)
+            return axiosInstance.get(`/api/admin/promocode/allCodes`)
         },
         create: async (body) => {
-            return axiosInstance.post(`/admin/promocode/createCode`, body)
+            return axiosInstance.post(`/api/admin/promocode/createCode`, body)
         },
         delete: async (id) => {
-            return axiosInstance.delete(`/admin/promocode/delete/${id}`)
+            return axiosInstance.delete(`/api/admin/promocode/delete/${id}`)
         },
     },
     statistics: {
         popularSongs: async ({dateFrom, dateTo}, page = 0, size = 10) => {
-            return axiosInstance.get(`/admin/statistics/popularTracks`, {
+            return axiosInstance.get(`/api/admin/statistics/popularTracks`, {
                 params: {
                     dateFrom,
                     dateTo,
@@ -107,7 +114,7 @@ export const apiRequests = {
             })
         },
         sungSongs: async ({dateFrom, dateTo}, page = 0, size = 10) => {
-            return axiosInstance.get(`/admin/statistics/sungSong`, {
+            return axiosInstance.get(`/api/admin/statistics/sungSong`, {
                 params: {
                     dateFrom,
                     dateTo,
@@ -117,7 +124,7 @@ export const apiRequests = {
             })
         },
         songSearchAnalytic: async ({dateFrom, dateTo}, page = 0, size = 10) => {
-            return axiosInstance.get(`/admin/statistics/songSearchAnalytics`, {
+            return axiosInstance.get(`/api/admin/statistics/songSearchAnalytics`, {
                 params: {
                     dateFrom,
                     dateTo,
@@ -127,7 +134,7 @@ export const apiRequests = {
             })
         },
         deviceActivity: async ({dateFrom, dateTo}, page = 0, size = 10) => {
-            return axiosInstance.get(`/admin/statistics/deviceActivity`, {
+            return axiosInstance.get(`/api/admin/statistics/deviceActivity`, {
                 params: {
                     dateFrom,
                     dateTo,
@@ -137,7 +144,7 @@ export const apiRequests = {
             })
         },
         songSearchNotResult: async ({dateFrom, dateTo}, page = 0, size = 10) => {
-            return axiosInstance.get(`/admin/statistics/songSearchNotFoundRequests`, {
+            return axiosInstance.get(`/api/admin/statistics/songSearchNotFoundRequests`, {
                 params: {
                     dateFrom,
                     dateTo,
@@ -146,19 +153,41 @@ export const apiRequests = {
                 }
             })
         },
-        moneyDistribution: async ({dateFrom, dateTo}, page = 0, size = 10) => {
-            return axiosInstance.get(`/admin/statistics/moneyDistribution`, {
-                params: {
-                    dateFrom,
-                    dateTo,
-                    page,
-                    size
-                }
-            })
+        moneyDistribution: async () => {
+            return axiosInstance.get(`/api/admin/statistics/moneyDistribution`)
         },
     },
-
+    holders: {
+        getAll: async () => {
+            return axiosInstance.get(`/v2/api/admin/media/getAllCopyrightHolders?page=0&size=100`)
+        },
+        create: async (body) => {
+            return axiosInstance.postForm(`/v2/api/admin/media/createCopyrightHolder`, body)
+        },
+        edit: async (body, id) => {
+            return axiosInstance.put(`/v2/api/admin/media/updateCopyrightHolder/${id}`, body)
+        },
+        delete: async (id) => {
+            return axiosInstance.delete(`/v2/api/admin/media/deleteCopyrightHolder/${id}`)
+        }
+    },
+    collection: {
+        getAll: async () => {
+            return axiosInstance.get('/v2/api/admin/media/getAllCollections', {
+                params: { page: 0, size: 50 }
+            })
+        },
+        delete: async (id) => {
+            return axiosInstance.delete(`/v2/api/admin/media/deleteCollection/${id}`)
+        },
+        update: async (id, body) => {
+            return axiosInstance.put(`/v2/api/admin/media/updateCollection/${id}`, body)
+        },
+        create: async (body) => {
+            return axiosInstance.postForm(`/v2/api/admin/media/createCollection`, body)
+        }
+    },
     logout: () => {
-        return axiosInstance.get('/v1/auth/logout')
+        return axiosInstance.get('/api/v1/auth/logout')
     }
 }

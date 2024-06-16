@@ -8,7 +8,7 @@ export const RegistrationForm = ({setReg}) => {
     const [form] = useForm()
 
     const handleSubmit = async (values) => {
-        await axiosInstance.post('/v1/auth/register', {
+        await axiosInstance.post('/api/v1/auth/register', {
             ...values
         })
             .then((res) => setReg())

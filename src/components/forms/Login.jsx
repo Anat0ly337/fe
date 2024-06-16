@@ -13,7 +13,7 @@ export const LoginForm = ({setReg}) => {
     const dispatch = useDispatch()
     const handleSubmit = async (values) => {
 
-        await axiosInstance.post('/v1/auth/authenticate', {
+        await axiosInstance.post('/api/v1/auth/authenticate', {
             ...values
         })
             .then((res) => {

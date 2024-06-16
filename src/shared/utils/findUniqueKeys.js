@@ -15,8 +15,8 @@ const findUniqueKeys = (oldData, newData) => {
 
         } else {
             if (
-                oldData.hasOwnProperty(key) &&
-                newData.hasOwnProperty(key) &&
+                oldData?.hasOwnProperty(key) &&
+                newData?.hasOwnProperty(key) &&
                 oldData[key] !== newData[key]
             ) {
                 changedValues[key] = newData[key];

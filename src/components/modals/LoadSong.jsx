@@ -1,16 +1,17 @@
+import {Button, Checkbox, Form, Input, InputNumber, message, Modal, Select, Spin, Switch, Upload} from "antd";
 import {CloudDownloadOutlined, LoadingOutlined} from "@ant-design/icons";
-import {Button, Form, Input, InputNumber, message, Modal, Select, Spin, Upload} from "antd";
 import {useEffect, useRef, useState} from "react";
 import {useSelector} from "react-redux";
 import {apiRequests} from "../../shared/api";
+import CreatingPage from "../../pages/CreatingPage/CreatingPage";
+import {SelectAuthors} from "../../shared/ui/SelectAuthors";
 
 const rule = { required: true, message: 'Поле не может быть пустым' }
 
 const LoadSong = ({updateRow}) => {
-    const [isActive, setActive] = useState(false)
     const [isRequestLoading, setRequestLoading] = useState(false)
-    const [authors, setAuthorsList] = useState([])
     const [albums, setAlbumList] = useState([])
+    const [holders, setHoldersList] = useState([])
     const {mainSlice} = useSelector(state => state)
 
     function onChange({ file, fileList }) {
@@ -19,78 +20,82 @@ const LoadSong = ({updateRow}) => {
         }
     }
 
-    useEffect(() => {
-        // .querySelector('div.ant-upload-list-item-progress').display = 'none'
-
-    }, []);
-
     const submitHandler = async (val) => {
         const formData = new FormData()
         for (let key in val) {
             if (typeof val[key] === "object") {
-                formData.append(key, new Blob([val[key].file.originFileObj]))
-                formData.append(`${key}ContentType`, val[key].file.originFileObj.type)
+                if (key === 'authors') {
+                    formData.append('authors', Array.from(new Set(val[key])))
+                } else {
+                    formData.append(key, new Blob([val[key].file.originFileObj]))
+                    formData.append(`${key}ContentType`, val[key].file.originFileObj.type)
+                }
+
             } else {
-                formData.append(key, val[key])
+                if (key === 'tags') {
+                    formData.append(key, Array.from(new Set(val[key].split(','))))
+
+                } else {
+                    formData.append(key, val[key])
+                }
             }
         }
         setRequestLoading(true)
         await apiRequests.media.create(formData)
             .then(async (res) => {
                 setRequestLoading(false)
-                window.location.reload()
             })
             .catch((e) => {
                 message.error(e.response.data.message || 'Произошла ошибка')
             })
     }
 
-    const showModal = () => {
-        setAuthorsList([...mainSlice.authors].map(i => ({
-            value: i.authorFullName,
-            key: i.id
-        })))
-        setAlbumList([...mainSlice.albums].map(i => ({
+    useEffect(() => {
+        setAlbumList(mainSlice.albums.map(i => ({
             value: i.name,
             key: i.id
         })))
-        setActive(true)
-    }
+        setHoldersList(mainSlice.holders.map(i => ({
+            value: i.holderFullName,
+            key: i.id
+        })))
+    }, [mainSlice.authors, mainSlice.albums, mainSlice.holders])
 
     return (
       <>
-        <Button onClick={showModal}  type="primary" icon={<CloudDownloadOutlined />}>Загрузить аудио</Button>
-        <Modal
-            destroyOnClose={true}
-            open={isActive}
-            footer={[]} 
-            onCancel={() => setActive(false)} 
+        <CreatingPage
             title='Загрузка аудио'
         >
             <Form
                 onFinish={submitHandler}
-                style={{marginTop: '25px'}}
                 labelCol={{
-                    span: 6,
+                    span: 10,
                 }}
                 wrapperCol={{
-                    span: 25,
+                    span: 5,
                 }}
+                style={{width: '100%'}}
             >
                 <Form.Item rules={[rule]} label={'Название'} name={'name'}>
                     <Input />
                 </Form.Item>
-                <Form.Item rules={[rule]} label={'Год'} name={'yearIssue'}>
-                    <InputNumber />
-                </Form.Item>
                 <Form.Item rules={[rule]} label={'Жанр'} name={'genre'}>
                     <Input />
+                </Form.Item>
+                <Form.Item rules={[rule]} label={'Теги'} name={'tags'}>
+                    <Input placeholder={'Введите теги через запятую'} />
                 </Form.Item>
                 <Form.Item rules={[rule]} label={'Альбом'} name={'album'}>
                     <Select options={albums} />
                 </Form.Item>
-                <Form.Item rules={[rule]} label={'Автор'} name={'author'}>
-                    <Select options={authors} />
+                <Form.Item rules={[rule]}  label={'Автор'} name={'authors'}>
+                    <SelectAuthors />
+                </Form.Item>
+                <Form.Item rules={[rule]} label={'Правообладатель'} name={'holder'}>
+                    <Select options={holders} />
+                </Form.Item>
+                <Form.Item initialValue={false} label={'Ненормативная лексика'} name={'hasProfanity'}>
+                    <Switch />
                 </Form.Item>
                 <Form.Item  rules={[rule]} label={'Трек'} name={'song'}>
                     <Upload
@@ -128,12 +133,15 @@ const LoadSong = ({updateRow}) => {
                         <Button>Загрузить</Button>
                     </Upload>
                 </Form.Item>
-                <Form.Item>
-                    <Button icon={isRequestLoading && <Spin size={'small'} />} disabled={isRequestLoading} htmlType={'submit'}>Добавить</Button>
+                <Form.Item
+                    wrapperCol={{ span: 24 }}
+                    style={{ textAlign: 'center'}}
+                >
+                    <Button icon={isRequestLoading && <Spin size={'small'} />} style={{width: '15%'}} disabled={isRequestLoading} htmlType={'submit'}>Добавить</Button>
                 </Form.Item>
             </Form>
 
-        </Modal>
+        </CreatingPage>
       </>
     )
 };

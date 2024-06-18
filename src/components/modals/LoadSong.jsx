@@ -5,15 +5,20 @@ import {useSelector} from "react-redux";
 import {apiRequests} from "../../shared/api";
 import CreatingPage from "../../pages/CreatingPage/CreatingPage";
 import {SelectAuthors} from "../../shared/ui/SelectAuthors";
+import {useNavigate} from "react-router-dom";
+import {SelectAlbum} from "../../shared/ui/SelectAlbum";
+import {FileUpload} from "../../shared/ui/FileUpload";
+import {SelectHolders} from "../../shared/ui/SelectHolders";
 
 const rule = { required: true, message: 'Поле не может быть пустым' }
 
 const LoadSong = ({updateRow}) => {
     const [isRequestLoading, setRequestLoading] = useState(false)
     const [albums, setAlbumList] = useState([])
+    const [songFile, setSongFile] = useState()
     const [holders, setHoldersList] = useState([])
     const {mainSlice} = useSelector(state => state)
-
+    const navigate = useNavigate()
     function onChange({ file, fileList }) {
         if (file.status !== 'uploading') {
           console.log(file, fileList);
@@ -21,6 +26,9 @@ const LoadSong = ({updateRow}) => {
     }
 
     const submitHandler = async (val) => {
+        if (!songFile) {
+            return message.error('Пожалуйста выберите трек')
+        }
         const formData = new FormData()
         for (let key in val) {
             if (typeof val[key] === "object") {
@@ -40,12 +48,15 @@ const LoadSong = ({updateRow}) => {
                 }
             }
         }
+        formData.append('song', new Blob([songFile[0]]))
         setRequestLoading(true)
         await apiRequests.media.create(formData)
             .then(async (res) => {
                 setRequestLoading(false)
+                navigate('/songs')
             })
             .catch((e) => {
+                setRequestLoading(false)
                 message.error(e.response.data.message || 'Произошла ошибка')
             })
     }
@@ -86,25 +97,19 @@ const LoadSong = ({updateRow}) => {
                     <Input placeholder={'Введите теги через запятую'} />
                 </Form.Item>
                 <Form.Item rules={[rule]} label={'Альбом'} name={'album'}>
-                    <Select options={albums} />
+                    <SelectAlbum />
                 </Form.Item>
                 <Form.Item rules={[rule]}  label={'Автор'} name={'authors'}>
                     <SelectAuthors />
                 </Form.Item>
                 <Form.Item rules={[rule]} label={'Правообладатель'} name={'holder'}>
-                    <Select options={holders} />
+                    <SelectHolders />
                 </Form.Item>
                 <Form.Item initialValue={false} label={'Ненормативная лексика'} name={'hasProfanity'}>
                     <Switch />
                 </Form.Item>
-                <Form.Item  rules={[rule]} label={'Трек'} name={'song'}>
-                    <Upload
-                        accept="audio/mpeg, .mp4, .m4a"
-                        action='/'
-                        onChange={onChange}
-                    >
-                        <Button>Загрузить</Button>
-                    </Upload>
+                <Form.Item  label={'Трек'}>
+                    <FileUpload setSongFile={setSongFile} songFile={songFile} />
                 </Form.Item>
                 <Form.Item rules={[rule]} label={'Текст'} name={'txt'}>
                     <Upload

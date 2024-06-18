@@ -8,6 +8,7 @@ import CreatingPage from "../../pages/CreatingPage/CreatingPage";
 import {useLocation, useParams} from "react-router-dom";
 import findUniqueKeys from "../../shared/utils/findUniqueKeys";
 import {SelectAuthors} from "../../shared/ui/SelectAuthors";
+import {SelectAlbum} from "../../shared/ui/SelectAlbum";
 
 
 const EditSong = ({}) => {
@@ -41,7 +42,7 @@ const EditSong = ({}) => {
                             formData.append('authors', Array.from(new Set(val[key])))
                             break;
                         case 'tags':
-                            formData.append('tags', Array.from(new Set(val[key])))
+                            formData.append('tags', Array.from(new Set(val[key].split(','))))
                             break;
                         default:
                             console.log(submitData[key])
@@ -61,6 +62,15 @@ const EditSong = ({}) => {
 
         await apiRequests.media.update(data.id, formData)
             .then((res) => {
+                const updatedData = {};
+                formData.forEach(function(value, key){
+                    updatedData[key] = value;
+                })
+                // ???
+                setData(prev => ({
+                    ...prev,
+                    ...updatedData
+                }))
                 message.success('Аудио успешно изменено')
                 setLoading(false)
                 setActive(false)
@@ -91,7 +101,6 @@ const EditSong = ({}) => {
     }
     useEffect(() => {
         showModal()
-
     }, [])
     return (
         <>
@@ -118,10 +127,7 @@ const EditSong = ({}) => {
                             <Input  />
                         </Form.Item>
                         <Form.Item label='Альбом' name='album'>
-                            <Select options={albumList} />
-                        </Form.Item>
-                        <Form.Item label='Год' name='yearIssue'>
-                            <InputNumber />
+                            <SelectAlbum />
                         </Form.Item>
                         <Form.Item label='Ненормативная лексика' name='hasProfanity'>
                             <Switch />

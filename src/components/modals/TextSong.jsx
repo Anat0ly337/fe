@@ -21,7 +21,9 @@ export const TextSong = ({url}) => {
                     setText(h)
                     setActive(true)
                 }
-            }).catch(() => message.error('Произошла ошибка'))
+            }).catch((e) => {
+                message.error(e.response.data.message || 'Произошла ошибка')
+            })
 
     }
 

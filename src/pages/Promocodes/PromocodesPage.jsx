@@ -28,7 +28,7 @@ const PromocodesPage = () => {
                     }
                 })
             })
-            .catch((e) => message.error('Произошла ошибка'))
+            .catch((e) => message.error(e.response.data.message || 'Произошла ошибка'))
     }
 
     const handleDelete = async (id) => {
@@ -36,7 +36,7 @@ const PromocodesPage = () => {
             .then((res) => {
                 setPromocodes(prev => [...prev].filter(i => i.id !== id))
                 message.success('Промокод успешно удалён')
-            }).catch(() => message.error('Произошла ошибка'))
+            }).catch((e) => message.error(e.response.data.message || 'Произошла ошибка'))
     }
 
     const columns = [

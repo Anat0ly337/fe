@@ -14,7 +14,7 @@ const SongsOfAuthor = () => {
     const [tablePagination, setPagination] = useState({
         pagination: {
             current: 1,
-            pageSize: 10,
+            pageSize: 5,
             total: 250
         }
     })
@@ -28,7 +28,7 @@ const SongsOfAuthor = () => {
                 message.success('Трек успешно удален')
             })
             .catch((e) => {
-                message.error('Произошла ошибка')
+                message.error(e.response.data.message || 'Произошла ошибка')
             })
     }
 
@@ -95,13 +95,12 @@ const SongsOfAuthor = () => {
     }
 
     const handlePagination = async ({current, pageSize}) => {
-        const page = parsePage(current)
-        setLoading(true)
-        await apiRequests.media.get(page, pageSize)
-            .then((res) => {
-                setSongs(res.data.searchData.songs)
-                setLoading(false)
-            })
+        setPagination(prev => ({
+            pagination: {
+                ...prev.pagination,
+                current: current
+            }
+        }))
 
     }
 
@@ -109,7 +108,13 @@ const SongsOfAuthor = () => {
         const getData = async () => {
             await apiRequests.authors.getSongs(id)
                 .then((res) => {
-                    setSongs(res.data.map(i => i.song))
+                    setPagination(prev => ({
+                        pagination: {
+                            ...prev.pagination,
+                            total: res.data.songsCount                        
+                        }
+                    }))
+                    setSongs(res.data.songs.map(i => i.song))
                 })
         }
         getData()
@@ -151,7 +156,7 @@ const SongsOfAuthor = () => {
                     }
                 ]}
                 deleteHandler={deleteHandle}
-                pagination={tablePagination}
+                pagination={tablePagination.pagination}
                 updateHandler={updateHandler}
                 setSongs={setSongs}
             />

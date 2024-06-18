@@ -27,7 +27,7 @@ export const SearchUsers = ({updateData}) => {
             if (e.response.data.message === 'User Not Found') {
                 message.info('Пользователь не найден')
             } else {
-                message.error('Произошла ошибка')
+                message.error(e.response.data.message || 'Произошла ошибка')
             }
         }
 

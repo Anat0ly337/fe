@@ -46,13 +46,6 @@ export const SongsTable = ({songs, handleTable, pagination, updateHandler, delet
             })
     }
 
-    useEffect(() => {
-
-        window.addEventListener('', () => {
-            console.log('play')
-        })
-    }, [])
-
     const columns = [
         {
             title: 'Изображение',

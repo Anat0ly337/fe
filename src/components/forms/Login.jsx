@@ -25,7 +25,7 @@ export const LoginForm = ({setReg}) => {
                 if (e.response.status === 400) {
                     message.error('Неправильный логин или пароль')
                 } else {
-                    message.error('Произошла ошибка')
+                    message.error(e.response.data.message || 'Произошла ошибка')
                 }
             })
     }
@@ -46,7 +46,7 @@ export const LoginForm = ({setReg}) => {
                     <Input />
                 </Form.Item>
                 <Form.Item name={'password'} label={'Пароль'}>
-                    <Input />
+                    <Input type={'password'} />
                 </Form.Item>
                 <div style={{margin: '10px 0'}}>
                     <Link onClick={setReg} style={{margin: '0 0 0 200px'}}>Зарегистрироваться</Link>

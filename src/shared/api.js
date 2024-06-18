@@ -68,13 +68,18 @@ export const apiRequests = {
         },
         getSongs: async (id) => {
             return axiosInstance.get(`/api/admin/statistics/getSongsStatisticsByAuthorId/${id}`)
-
-        }
+        },
+        getByName: async (name) => {
+            return axiosInstance.get(`/v2/api/admin/media/getAuthorByName/${name}`)
+        },
     },
     albums: {
         create: async (body) => {
             return axiosInstance.postForm(`/api/admin/media/createAlbum`, body)
-        }
+        },
+        getByName: async (name) => {
+            return axiosInstance.get(`/v2/api/admin/media/getAlbumByName/${name}`)
+        },
     },
     advertisement: {
         getAll: async (size = 10, page = 0) => {
@@ -169,7 +174,10 @@ export const apiRequests = {
         },
         delete: async (id) => {
             return axiosInstance.delete(`/v2/api/admin/media/deleteCopyrightHolder/${id}`)
-        }
+        },
+        getByName: async (name) => {
+            return axiosInstance.get(`/v2/api/admin/media/getAuthorByName/${name}`)
+        },
     },
     collection: {
         getAll: async () => {

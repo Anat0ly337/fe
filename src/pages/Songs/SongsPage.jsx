@@ -35,13 +35,10 @@ const SongsPage = () => {
                 message.success('Трек успешно удален')
             })
             .catch((e) => {
-                message.error('Произошла ошибка')
+                message.error(e.response.data.message || 'Произошла ошибка')
             })
     }
 
-    useEffect(() => {
-
-    }, []);
 
 
     const handlePagination = async ({current, pageSize}) => {
@@ -123,8 +120,9 @@ const SongsPage = () => {
                     return res.data.songs
                 })
                 .then((res) => {
-                    res.map(i => {
-                        axiosInstance.get(`https://dligjs37pj7q2.cloudfront.net${i.songImageUri}`, {
+                    const queries = res.map(i => {
+
+                        return axiosInstance.get(`https://dligjs37pj7q2.cloudfront.net${i.songImageUri}`, {
                             responseType: 'blob'
                         })
                             .then((data) => {
@@ -134,6 +132,8 @@ const SongsPage = () => {
                                 }])
                             })
                     })
+
+
                 })
         }
 

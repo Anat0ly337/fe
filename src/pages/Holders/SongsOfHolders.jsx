@@ -29,7 +29,7 @@ const SongsOfHolders = () => {
                 message.success('Трек успешно удален')
             })
             .catch((e) => {
-                message.error('Произошла ошибка')
+                message.error(e.response.data.message || 'Произошла ошибка')
             })
     }
 

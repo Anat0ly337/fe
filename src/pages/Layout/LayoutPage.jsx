@@ -152,7 +152,7 @@ const LayoutPage = () => {
                     sessionStorage.removeItem('accessToken')
                     dispatch(setAuth(false))
                 })
-                .catch(() => message.error('Произошла ошибка'))
+                .catch((e) => message.error(e.response.data.message || 'Произошла ошибка'))
         } else {
             navigate(link.key)
         }
@@ -206,6 +206,9 @@ const LayoutPage = () => {
             }
             getData()
         }
+        else {
+            navigate('/auth')
+        }
 
     }, [mainSlice.isAuth]);
     if (!mainSlice.isAuth) return <Navigate to={'/auth'} />
@@ -213,7 +216,7 @@ const LayoutPage = () => {
     return (
         <>
             <Layout>
-                <Sider style={{height: '100vh'}} >
+                <Sider width={'15%'} style={{height: '100vh'}} >
                     <Menu
                         style={{height: '100vh', overflow: 'auto'}}
                         onClick={handleLink}

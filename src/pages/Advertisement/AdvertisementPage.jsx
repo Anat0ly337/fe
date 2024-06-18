@@ -25,7 +25,9 @@ const AdvertisementPage = () => {
             .then((res) => {
                 setData(prev => [...prev].filter(i => i.id !== id))
                 message.success('Контракт успешно удалён')
-            }).catch(() => message.error('Произошла ошибка'))
+            }).catch((e) => {
+                message.error(e.response.data.message || 'Произошла ошибка')
+            })
     }
 
 

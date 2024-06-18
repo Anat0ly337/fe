@@ -12,8 +12,8 @@ export const RegistrationForm = ({setReg}) => {
             ...values
         })
             .then((res) => setReg())
-            .catch(() => {
-                message.error('Произошла ошибка')
+            .catch((e) => {
+                message.error(e.response.data.message || 'Произошла ошибка')
             })
     }
 

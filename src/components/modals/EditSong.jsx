@@ -9,6 +9,7 @@ import {useLocation, useParams} from "react-router-dom";
 import findUniqueKeys from "../../shared/utils/findUniqueKeys";
 import {SelectAuthors} from "../../shared/ui/SelectAuthors";
 import {SelectAlbum} from "../../shared/ui/SelectAlbum";
+import { SelectHolders } from "../../shared/ui/SelectHolders";
 
 
 const EditSong = ({}) => {
@@ -128,6 +129,9 @@ const EditSong = ({}) => {
                         </Form.Item>
                         <Form.Item label='Альбом' name='album'>
                             <SelectAlbum />
+                        </Form.Item>
+                        <Form.Item label='Правообладатель' name='holder'>
+                            <SelectHolders />
                         </Form.Item>
                         <Form.Item label='Ненормативная лексика' name='hasProfanity'>
                             <Switch />

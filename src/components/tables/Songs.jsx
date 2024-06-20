@@ -103,14 +103,6 @@ export const SongsTable = ({songs, handleTable, pagination, updateHandler, delet
                 <p>{record.rating || 0}</p>
             )
         },
-        {
-            title: 'Год выпуска',
-            dataIndex: 'yearIssue',
-            key: 'yearIssue',
-            render: (_, record) => (
-                <p>{record.yearIssue}</p>
-            )
-        },
         ...additionalColumns,
         {
             title: 'Действие',

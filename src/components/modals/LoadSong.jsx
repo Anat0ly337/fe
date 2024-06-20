@@ -102,7 +102,7 @@ const LoadSong = ({updateRow}) => {
                 <Form.Item rules={[rule]}  label={'Автор'} name={'authors'}>
                     <SelectAuthors />
                 </Form.Item>
-                <Form.Item rules={[rule]} label={'Правообладатель'} name={'holder'}>
+                <Form.Item label={'Правообладатель'} name={'holder'}>
                     <SelectHolders />
                 </Form.Item>
                 <Form.Item initialValue={false} label={'Ненормативная лексика'} name={'hasProfanity'}>

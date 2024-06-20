@@ -258,7 +258,7 @@ const SongsPage = () => {
                 onFinish={handleSearch}
             >
                 <Form.Item name={'search'}>
-                    <Input placeholder={'Поиск по ID'} />
+                    <Input placeholder={'Полнотекстовый текст'} />
                 </Form.Item>
                 <Form.Item name={'search_by_file'}>
                     <Input placeholder={'Поиск по названию файла трека'} />

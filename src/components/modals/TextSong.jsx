@@ -9,8 +9,7 @@ export const TextSong = ({url}) => {
     const [text, setText] = useState('')
 
     const queryText = async () => {
-        const newUrl = url.replace('/api', '')
-        await axiosInstance.get(newUrl)
+        await axiosInstance.get(url)
             .then((res) => {
                 if (res.data.textLength === 0) {
                     message.info('Текст отсутствует')

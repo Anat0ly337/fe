@@ -22,7 +22,7 @@ export const TextSong = ({url}) => {
                     setActive(true)
                 }
             }).catch((e) => {
-                message.error(e.response.data.message || 'Произошла ошибка')
+                message.error(e.response.data.message || e.response.data.detail || 'Произошла ошибка')
             })
 
     }

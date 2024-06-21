@@ -78,6 +78,11 @@ const Holders = () => {
             render: (_, record) => <p>{_.toFixed(2)}</p>
         },
         {
+            title: 'Общее кол-во просмотров',
+            dataIndex: 'totalSeenCount',
+            key: 'totalSeenCount',
+        },
+        {
             title: 'Действие',
             key: 'actions',
             render: (_, record) => (

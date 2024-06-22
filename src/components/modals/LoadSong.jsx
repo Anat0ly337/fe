@@ -53,6 +53,7 @@ const LoadSong = ({updateRow}) => {
         await apiRequests.media.create(formData)
             .then(async (res) => {
                 setRequestLoading(false)
+                message.success('Трек успешно создан')
                 navigate('/songs')
             })
             .catch((e) => {
@@ -96,7 +97,7 @@ const LoadSong = ({updateRow}) => {
                 <Form.Item rules={[rule]} label={'Теги'} name={'tags'}>
                     <Input placeholder={'Введите теги через запятую'} />
                 </Form.Item>
-                <Form.Item rules={[rule]} label={'Альбом'} name={'album'}>
+                <Form.Item label={'Альбом'} name={'album'}>
                     <SelectAlbum />
                 </Form.Item>
                 <Form.Item rules={[rule]}  label={'Автор'} name={'authors'}>

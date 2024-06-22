@@ -10,6 +10,7 @@ import findUniqueKeys from "../../shared/utils/findUniqueKeys";
 import {SelectAuthors} from "../../shared/ui/SelectAuthors";
 import {SelectAlbum} from "../../shared/ui/SelectAlbum";
 import { SelectHolders } from "../../shared/ui/SelectHolders";
+import {FileUpload} from "../../shared/ui/FileUpload";
 
 
 const EditSong = ({}) => {
@@ -17,6 +18,7 @@ const EditSong = ({}) => {
     const [isActive, setActive] = useState(false)
     const [isLoading, setLoading] = useState(true)
     const [albumList, setAlbumList] = useState([])
+    const [songFile, setSongFile] = useState(null)
     const {id} = useParams()
     const {mainSlice} = useSelector(state => state)
     const {state} = useLocation()
@@ -33,9 +35,7 @@ const EditSong = ({}) => {
                 return i
             }
         })
-        console.log(submitData)
         for (let key in submitData) {
-            console.log(submitData[key])
             if (submitData[key]) {
                 if (typeof submitData[key] === "object") {
                     switch (key) {
@@ -45,8 +45,9 @@ const EditSong = ({}) => {
                         case 'tags':
                             formData.append('tags', Array.from(new Set(val[key].split(','))))
                             break;
+                        case 'authorsNew':
+                            break;
                         default:
-                            console.log(submitData[key])
                             formData.append(key, new Blob([submitData[key].fileList[0].originFileObj]))
                             formData.append(`${key}ContentType`, submitData[key].file.originFileObj.type)
                             break;
@@ -60,7 +61,10 @@ const EditSong = ({}) => {
                 }
             }
         }
-
+        if (songFile) {
+            formData.append('song', songFile[0])
+            formData.append('songContentType', songFile[0].type)
+        }
         await apiRequests.media.update(data.id, formData)
             .then((res) => {
                 const updatedData = {};
@@ -161,12 +165,7 @@ const EditSong = ({}) => {
                             </Upload>
                         </Form.Item>
                         <Form.Item label='Аудио' name='song'>
-                            <Upload
-                                accept="audio/mpeg, .mp4, .m4a"
-                                action='/'
-                            >
-                                <Button>Загрузить</Button>
-                            </Upload>
+                            <FileUpload setSongFile={setSongFile} songFile={songFile} />
                         </Form.Item>
 
                         <Form.Item>

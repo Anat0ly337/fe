@@ -69,13 +69,13 @@ const Holders = () => {
             title: 'Общая сумма',
             dataIndex: 'totalSumByHolder',
             key: 'totalSumByHolder',
-            render: (_, record) => <p>{_.toFixed(2)}</p>
+            render: (_, record) => <p>{_?.toFixed(2)}</p>
         },
         {
             title: 'Цена за 1 воспроизведение',
             dataIndex: 'priceByOnePlay',
             key: 'priceByOnePlay',
-            render: (_, record) => <p>{_.toFixed(2)}</p>
+            render: (_, record) => <p>{_?.toFixed(2)}</p>
         },
         {
             title: 'Общее кол-во просмотров',

@@ -193,6 +193,12 @@ export const apiRequests = {
         },
         create: async (body) => {
             return axiosInstance.postForm(`/v2/api/admin/media/createCollection`, body)
+        },
+        deleteSongOfCollection: async (id) => {
+            return axiosInstance.delete(`/v2/api/admin/media/deleteSongFromCollection/${id}`)
+        }, 
+        addSong: async (body) => {
+            return axiosInstance.post(`/v2/api/admin/media/addSongsToCollection`, body)
         }
     },
     logout: () => {

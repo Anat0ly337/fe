@@ -9,7 +9,7 @@ import ImageColumn from "../../shared/ui/ImageColumn";
 import {SongAdditionalActions} from "../../shared/ui/SongAdditionalActions";
 
 
-export const SongsTable = ({songs, handleTable, pagination, updateHandler, deleteHandler, additionalColumns = [], setSongs, isLoading}) => {
+export const SongsTable = ({songs, handleTable, pagination, updateHandler, deleteHandler, additionalColumns = [], actions, setSongs, isLoading}) => {
     const [currentSong, setSong] = useState('')
     const [cacheSong, setCacheSong] = useState()
     const handleSong = async (check, data) => {
@@ -44,6 +44,20 @@ export const SongsTable = ({songs, handleTable, pagination, updateHandler, delet
                 link.click();
                 link.remove()
             })
+    }
+
+    const actionOfColumn = (_, record) => {
+        if (actions) {
+            return actions.call(this,_, record)
+        }
+        return (
+            <Space>
+                <Link state={{data: record}} to={`/songs/edit/${record.id}`}>
+                    <Button icon={<EditOutlined />} />
+                </Link>
+                <Button onClick={() => deleteHandler(record.id)} danger icon={<DeleteOutlined />} />
+            </Space>
+        )
     }
 
     const columns = [
@@ -107,14 +121,7 @@ export const SongsTable = ({songs, handleTable, pagination, updateHandler, delet
         {
             title: 'Действие',
             key: 'action',
-            render: (_, record) => (
-                <Space>
-                    <Link state={{data: record}} to={`/songs/edit/${record.id}`}>
-                        <Button icon={<EditOutlined />} />
-                    </Link>
-                    <Button onClick={() => deleteHandler(record.id)} danger icon={<DeleteOutlined />} />
-                </Space>
-            )
+            render: actionOfColumn
         }
     ]
 

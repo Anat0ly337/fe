@@ -49,6 +49,9 @@ const LoadSong = ({updateRow}) => {
             }
         }
         formData.append('song', new Blob([songFile[0]]))
+        formData.append('songContentType', songFile[0].type)
+        formData.append('fileName', songFile[0].name)
+
         setRequestLoading(true)
         await apiRequests.media.create(formData)
             .then(async (res) => {

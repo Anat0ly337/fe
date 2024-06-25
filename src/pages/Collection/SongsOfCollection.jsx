@@ -95,9 +95,14 @@ const SongsOfCollection = () => {
             songIds: [`${song.id}`]
         })
             .then((res) => {
-                setCurrentCollection(res.data)
+                console.log(song)
+                const updatedCollection = {
+                    ...collection,
+                    songs: [...collection.songs, song]
+                }
+                setCurrentCollection(updatedCollection)
                 dispatch(setCollection(mainSlice.collection.map((i) => {
-                    if (i.id === res.data.id) return res.data;
+                    if (i.id === res.data.id) return updatedCollection;
                     return i
                 })))
             })

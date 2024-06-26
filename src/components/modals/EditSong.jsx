@@ -64,6 +64,7 @@ const EditSong = ({}) => {
         if (songFile) {
             formData.append('song', songFile[0])
             formData.append('songContentType', songFile[0].type)
+            formData.append('fileName', songFile[0].name)
         }
         await apiRequests.media.update(data.id, formData)
             .then((res) => {
